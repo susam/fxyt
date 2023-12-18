@@ -13,7 +13,11 @@ XY^
 
 The result looks like this:
 
-**[See Demo][DEMO]**
+[![Screenshot of XOR pattern][IMG1]][DEMO1]
+
+**[See Demo][DEMO2]**
+
+**[Draw Now][DRAW1]**
 
 This project is inspired by Martin Kleppe's [Tixy][TIXY] project.
 While Tixy supports JavaScript expressions to determine the size and
@@ -26,8 +30,11 @@ evaluation of the input code.
 The following sections describe this language and the reference
 implementation that comes with this project.
 
-[DEMO]: https://susam.net/fxyt.html#XYx
+[IMG1]: https://susam.github.io/blob/img/fxyt/fxyt-0.1.0-xor.png
+[DEMO1]: https://susam.net/fxyt.html#XYx
+[DEMO2]: https://susam.net/fxyt.html#XYxTN1srN255pTN1sq
 [TIXY]: https://github.com/aemkei/tixy
+[DRAW1]: https://susam.net/fxyt.html
 
 
 Contents
