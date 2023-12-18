@@ -1,7 +1,7 @@
 FXYT
 ====
 
-FXYT (/fɒksɪt/) is a tiny canvas colouring language that consists of
+FXYT (/fɪksɪt/) is a tiny canvas colouring language that consists of
 36 simple stack-based commands.  The input code is evaluated for each
 cell of a 256x256 graphical canvas.  The colour of each cell is
 determined by the result of the evaluation.  Here is an extremely
@@ -21,11 +21,11 @@ The result looks like this:
 
 This project is inspired by Martin Kleppe's [Tixy][TIXY] project.
 While Tixy supports JavaScript expressions to determine the size and
-colour of circles in a 16x16 grid, FXYT comes with its own minimal
-stack-based postfix language that is written in postfix notation.
-Further, FXYT provides a 256x256 grid of cells each of which can be
-painted with an arbitrary colour determined by the result of the
-evaluation of the input code.
+colour of circles in a 16x16 grid, FXYT comes with its own tiny,
+stack-based language that is written in postfix notation.  Further,
+FXYT provides a 256x256 grid of cells each of which can be painted
+with an arbitrary colour determined by the result of the evaluation of
+the input code.
 
 The following sections describe this language and the reference
 implementation that comes with this project.
@@ -121,9 +121,8 @@ Finally, enter the following code:
 T
 ```
 
-Now we get an output that changes with time where the the colour of
-the entire canvas changes from black to blue gradually in 256
-iterations.
+Now we get an output that changes with time where the colour of the
+entire canvas changes from black to blue gradually in 256 iterations.
 
 We call any input code that contains at least one occurrence of the
 `T` command as time-dependent code.  Such code is evaluated in 256
@@ -400,14 +399,14 @@ XY%
 ```
 
 The following code demonstrates mode 1 where division by zero error is
-ignored and the cells at which such errors occurred are painted black.
+ignored and the cells at which such errors occur are painted black.
 
 ```
 MXY%
 ```
 
 The following code demonstrates mode 2 where division by zero error is
-ignored and the cells at which such errors occurred are painted red.
+ignored and the cells at which such errors occur are painted red.
 
 ```
 MMXY%
@@ -581,16 +580,16 @@ Looping is supported with the commands `[` and `]`.  Each time `[` is
 encountered, the evaluator picks a loop counter from the data stack
 and remembers the code position after the `[` as the beginning of the
 loop body.  It maintains this information in the loop control stack.
-The loop control stack is not directly accessible to be the
-programmer.  It is an internal implementation detail of the commands
-`[` and `]`.
+The loop control stack is not directly accessible to the programmer.
+It is an internal implementation detail of the commands `[` and `]`.
 
-To be precise, the command `[` pops off one value from the data stack
-and uses this value as the loop counter and the command that comes
-after the `[` as the beginning of the loop body.  If the loop counter
-is a positive integer, the loop body is entered.  Otherwise, a
-corresponding `]` is found (nested `[` and `]` pairs are skipped) and
-the evaluator skips ahead to the command after the corresponding `]`.
+To elaborate, the command `[` pops off one value from the data stack
+and uses this value as the loop counter.  The command that comes after
+the `[` is considered to be the beginning of the loop body.  If the
+loop counter is a positive integer, the loop body is entered.
+Otherwise, a corresponding `]` is found (nested `[` and `]` pairs are
+skipped) and the evaluator skips ahead to the command after the
+corresponding `]`.
 
 The command `]` decrements the loop counter of the current loop.
 After decrementing the loop counter, if its value is still positive,
@@ -609,13 +608,14 @@ to this place of the data stack where 0 has been pushed as the
 *initial place*.  The remainder of the code will increment the value
 in this initial place.  The command sequence `N5` places the integer 5
 on the stack.  Then `[` pops off 5 from the data stack, uses it as the
-loop counter and begins a loop.  Each iteration of the loop executes
+loop counter, and begins a loop.  Each iteration of the loop executes
 `N10+` which adds the integer 10 to the value in the initial place.
 Each time `]` is encountered, the loop counter is decremented by 1 and
-the evaluator jumps back to the beginning of the loop body.  As a
-result, the loop containing `N10+` is executed 5 times.  Thus the
-value at the initial place is incremented by 50.  When the evaluation
-completes, the value 50 is left on the data stack.
+if the loop counter is still 0, the evaluator jumps back to the
+beginning of the loop body.  As a result, the loop containing `N10+`
+is executed 5 times before the loop counter becomes 0 and the loop is
+exited.  Thus the value at the initial place is incremented by 50.
+When the evaluation completes, the value 50 is left on the data stack.
 
 Here is an example of nested loops that leaves the value 200 on the
 data stack.
@@ -674,7 +674,7 @@ command prints the coordinate (0, 0) followed by the data stack [0, 0]
 and halts the evaluation.
 
 A more typical requirement may to be find out what the input code
-evaluates to a particular coordinate.  This can be accomplished by
+evaluates to at a particular coordinate.  This can be accomplished by
 combining comparison commands with looping commands.  Here is an
 example that shows the result of evaluating `XY^` at the coordinate
 (7, 9):
@@ -694,17 +694,7 @@ comparisons earlier evaluated to 1, otherwise 0 is pushed to the
 stack.  Thus the following loop body is entered if and only if x = 7
 and y = 9.  As soon as the loop body is entered, `W` writes the
 current coordinate (7, 9) and the result 14 (the bitwise XOR of 7 and
-9 is 14) and halts the evaluation.  In terms of pseudocode, the above
-code example may be written as:
-
-```
-Push X;
-Push Y;
-Pop X and Y, then push the bitwise XOR of X and Y;
-If X = 7 AND Y = 7 {
-    Write stack and halt;
-}
-```
+9 is 14) and halts the evaluation.
 
 
 Idioms
@@ -748,17 +738,17 @@ Common Mistakes
   value and increment it by 1.  Instead it is an error.  Remember that
   `1` (a digit command) multiplies the existing number at the top of
   the data stack with 10 and then adds 1 to it.  Thus `X1` effectively
-  places the integer 10x + 1 on the stack.  The `+` command then fails
-  to add two integers at the top of the data stack because the data
-  stack contains only one integer.  The correct input code may be
-  something like `XN1+` instead.  Always remember to write `N` while
-  forming a new integer on the data stack.
+  replaces the integer x on the stack with 10x + 1.  The `+` command
+  then fails to add two integers at the top of the data stack because
+  the data stack contains only one integer.  The correct input code
+  may be something like `XN1+` instead.  Always remember to write `N`
+  while forming a new integer on the data stack.
 
 
 Implementation Constraints
 --------------------------
 
-The reference implementation that comes with this project enforce the
+The reference implementation that comes with this project enforces the
 following constraints:
 
 - Whenever a command produces an integer result, the result must not
