@@ -1,0 +1,1371 @@
+<!--
+  FXYT 0.1.0
+  Copyright (c) 2023 Susam Pal
+  Source: https://github.com/susam/cfr
+  License: MIT
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>FXYT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A tiny, stack-based, postfix canvas colouring language.">
+    <style>
+      body {
+        background: #111;
+        margin: 0;
+      }
+      canvas, section, pre, input, button {
+        background: #000;
+        box-sizing: border-box;
+        border: 1px solid #333;
+      }
+      canvas, section, pre, input {
+        display: block;
+        margin: 0 auto;
+      }
+      section, pre, input, button, a, code {
+        font-family: monospace,monospace;
+        font-size: 1em;
+        color: #999;
+      }
+      pre, input {
+        padding-left: 8px;
+      }
+      canvas {
+        image-rendering: pixelated;
+      }
+      section {
+        padding: 0 1em;
+        overflow: auto;
+      }
+      pre {
+        overflow: auto hidden;
+      }
+      input {
+        color: #ccc;
+        border-color: #666;
+        text-transform: uppercase;
+      }
+      input::placeholder {
+        text-transform: none;
+      }
+      input:focus {
+        outline: none;
+      }
+      button {
+        color: #999;
+        font-weight: bold;
+        vertical-align: middle;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      button:active {
+        background: #222;
+      }
+      div, footer {
+        text-align: center;
+      }
+      a {
+        color: #69c;
+      }
+      footer a {
+        line-height: 5;
+        margin-right: 1.5em;
+      }
+      footer a:last-child {
+        margin-right: 0;
+      }
+      table {
+        border-collapse: collapse;
+      }
+      td {
+        vertical-align: top;
+        padding-bottom: 1.0em;
+      }
+      td:first-child {
+        padding-right: 0.5em;
+      }
+      tr:last-child td {
+        padding-bottom: 0;
+      }
+      code {
+        font-weight: bold;
+        color: #6c3;
+      }
+    </style>
+    <script>
+      'use strict'
+
+      // Logging and tests.
+      const LOGGING = true
+
+      // Canvas parameters.
+      const GRID_SIZE = 256
+      const SCALE = 4
+
+      // Evaluation contraints.
+      const DATA_STACK_SIZE = 8
+      const LOOP_STACK_SIZE = 8
+      const MAX_T = 255
+      const MAX_VAL = 2147483647
+      const MIN_VAL = -2147483648
+      const MAX_OPS = 1000
+      const DEFAULT_FRAME_INTERVAL = 100
+
+      // Input contraints.
+      const MAX_CODE_LEN = 256
+      const MAX_DIST_LEN = 64
+
+      // Widget sizing and spacing.
+      const PADDING = 8
+      const PANEL_HEIGHT = 40
+
+      // Operators and URL encoding.
+      const OPS = 'XYT[]+-*/%=<>!^&|CDPSRFMWN1234567890'
+      const ENC = 'XYTbcsdpqrelgixaoCDPSRFMWN1234567890'
+
+      // Encoding Maps.
+      const OP = {} // Maps alias to op.
+      const ALIAS = {} // Maps op to alias.
+
+      // User interface elements
+      let canvas
+      let canvasSize
+      let ctx
+      let info
+      let status
+      let text
+      let buttons
+
+      // Code text.
+      let prevText
+      let codeText
+
+      // User interface states.
+      let paused = false
+      let questioned = false
+
+      // Evaluator iteration states.
+      let t = null
+      let frameTimer = null
+      let startTime = null
+      let nextFrameTime
+      let tDependent
+
+      function init () {
+        // Look up elements.
+        canvas = document.getElementById('canvas')
+        info = document.getElementById('info')
+        status = document.getElementById('status')
+        text = document.getElementById('text')
+        buttons = document.getElementById('buttons')
+
+        // Initialize canvas.
+        ctx = canvas.getContext('2d')
+        canvas.width = GRID_SIZE * SCALE
+        canvas.height = GRID_SIZE * SCALE
+
+        // Add event listeners for text.
+        text.addEventListener('keyup', actionKey)
+        text.addEventListener('paste', actionKey)
+        text.addEventListener('cut', actionKey)
+
+        // Add event listeners for web browser events.
+        window.addEventListener('hashchange', actionHash)
+        window.addEventListener('resize', resize)
+
+        // Run test suite if logging is enabled.
+        if (LOGGING) {
+          test()
+        }
+
+        // Initialize encoder maps.
+        if (initEncoderMaps() === null) {
+          return
+        }
+
+        // Initialize the user interface.
+        createButtons()
+        resize()
+        actionHash()
+        text.setSelectionRange(text.value.length, text.value.length)
+        window.scrollTo(0, 0)
+      }
+
+      function createButtons () {
+        const rows = [
+          ['X', 'Y', 'T', 'C', '&#x219e;', '&larr;', '?'],
+          ['D', 'P', 'S', 'R', '&laquo;', '&#x25a0;', '&raquo;'],
+          ['7', '8', '9', '%', '=', '<', '>'],
+          ['4', '5', '6', '*', '/', '^', '!'],
+          ['1', '2', '3', '+', '-', '&', '|'],
+          ['0', 'N', 'F', 'M', 'W', '[', ']']
+        ]
+
+        const titles = {
+          X: 'Push X',
+          Y: 'Push Y',
+          T: 'Push T',
+          C: 'Clip',
+          D: 'Duplicate',
+          P: 'Pop',
+          S: 'Swap',
+          R: 'Rotate',
+          F: 'Set Frame Interval',
+          M: 'Change Mode',
+          W: 'Write Stack',
+          N: 'Push 0',
+          '[': 'Begin loop',
+          ']': 'Close loop',
+          '+': 'Add',
+          '-': 'Subtract',
+          '*': 'Multiply',
+          '/': 'Divide',
+          '%': 'Modulo',
+          '=': 'Equal?',
+          '<': 'Less than?',
+          '>': 'Greater than?',
+          '^': 'Bitwise XOR',
+          '&': 'Bitwise AND',
+          '|': 'Bitwise OR'
+        }
+
+        for (let i = 0; i <= 9; ++i) {
+          titles[i.toString()] = 'Digit ' + i.toString()
+        }
+
+        const actions = {
+          '&laquo;': ['back', actionBack, 'Decrement T'],
+          '&raquo;': ['forward', actionForward, 'Increment T'],
+          '&#x25a0;': ['time', actionTime, 'Pause T'],
+          '&#x219e;': ['clear', actionClear, 'Clear'],
+          '&larr;': ['delete', actionDelete, 'Delete'],
+          '?': ['help', actionHelp, 'Help']
+        }
+
+        for (let i = 0; i < rows.length; ++i) {
+          const row = rows[i]
+          const div = document.createElement('div')
+          for (let j = 0; j < row.length; ++j) {
+            const key = rows[i][j]
+            const button = document.createElement('button')
+            const alias = ALIAS[key]
+            if (typeof alias !== 'undefined') { // Command button.
+              button.id = alias
+              button.addEventListener('click', function (e) {
+                e.preventDefault()
+                insertText(key)
+                restartDrawOnChange()
+              })
+              button.title = titles[key]
+            } else { // Non-command button.
+              button.id = actions[key][0]
+              button.addEventListener('click', actions[key][1])
+              button.title = actions[key][2]
+            }
+            button.innerHTML = key
+            div.appendChild(button)
+          }
+          buttons.appendChild(div)
+        }
+      }
+
+      function resize () {
+        // Set overall padding and calculate overall available width and height.
+        document.body.style.padding = PADDING + 'px'
+        const panels = 2
+        const availableWidth = window.innerWidth - 2 * PADDING
+        const availableHeight = window.innerHeight - panels * PANEL_HEIGHT - (panels + 2) * PADDING
+
+        // Resize canvas.
+        canvasSize = Math.floor(Math.min(availableWidth, availableHeight))
+        canvas.style.width = canvasSize + 'px'
+        canvas.style.height = canvasSize + 'px'
+        info.style.width = canvasSize + 'px'
+        info.style.height = canvasSize + 'px'
+
+        // Resize status panel.
+        status.style.width = canvasSize + 'px'
+        status.style.height = PANEL_HEIGHT + 'px'
+        status.style.lineHeight = PANEL_HEIGHT + 'px'
+        status.style.marginTop = PADDING + 'px'
+
+        // Resize code text panel.
+        text.style.width = canvasSize + 'px'
+        text.style.height = PANEL_HEIGHT + 'px'
+        text.style.marginTop = PADDING + 'px'
+
+        // Resize buttons.
+        for (let i = 0; i < buttons.children.length; ++i) {
+          const row = buttons.children[i]
+          const len = row.children.length
+          const buttonWidth = Math.floor((canvasSize - (len - 1) * PADDING) / len)
+          for (let j = 0; j < len; ++j) {
+            const button = row.children[j]
+            button.style.marginTop = PADDING + 'px'
+            button.style.width = buttonWidth + 'px'
+            button.style.height = PANEL_HEIGHT + 'px'
+            button.style.marginLeft = (j === 0 ? 0 : PADDING) + 'px'
+          }
+        }
+        log('resized: canvas: ' + canvasSize)
+      }
+
+      function restartDrawOnChange () {
+        if (prevText === codeText) {
+          log('skipping restart draw since no change in code')
+          return
+        }
+        log('restarting draw')
+        stopDraw()
+        startDraw()
+        prevText = codeText
+      }
+
+      function stopDraw () {
+        if (frameTimer !== null) {
+          window.clearTimeout(frameTimer)
+          frameTimer = null
+          log('stopped drawing')
+        } else {
+          log('stopped drawing; no iteration timer found')
+        }
+      }
+
+      function startDraw () {
+        log('starting draw', codeText)
+        t = 0
+        startTime = null
+        nextDraw()
+        log('started draw', codeText)
+      }
+
+      function nextDraw () {
+        clearHelp()
+        frame()
+      }
+
+      function frame () {
+        // Initialize iteration variables.
+        if (startTime === null) {
+          startTime = Date.now()
+          nextFrameTime = startTime
+        }
+
+        // Paint canvas.
+        const renderStartTime = Date.now()
+        let frameInterval
+        ctx.fillStyle = 'rgb(0, 0, 0)'
+        ctx.fillRect(0, 0, GRID_SIZE * SCALE, GRID_SIZE * SCALE)
+        for (let x = 0; x < GRID_SIZE; ++x) {
+          for (let y = 0; y < GRID_SIZE; ++y) {
+            const result = evaluate(codeText, x, y, t)
+            if (result === null) {
+              return
+            }
+            frameInterval = result[4]
+            if (validateColor(result[0], result[1], result[2], x, y, t) === false) {
+              return
+            }
+            plot(x, y, result[0], result[1], result[2])
+          }
+        }
+        const renderEndTime = Date.now()
+
+        // Update status.
+        const elapsed = (renderEndTime - startTime) / 1000
+        const bytes = codeText.length + (codeText.length === 1 ? ' byte' : ' bytes')
+        const duration = elapsed.toFixed(1) + ' s'
+
+        if (codeText.length === 0) {
+          status.innerHTML = 'READY.  Type &lsquo;?&rsquo; for help.'
+        } else if (tDependent) {
+          let tPadded = '00' + t
+          tPadded = tPadded.substring(tPadded.length - 3)
+          status.innerHTML = 't = ' + tPadded + ', ' + duration + ', ' + bytes
+        } else {
+          status.innerHTML = bytes + ', ' + duration
+        }
+
+        // Schedule next frame.
+        if (tDependent && t < MAX_T) {
+          ++t
+          if (!paused) {
+            nextFrameTime += frameInterval
+            const renderTime = renderEndTime - renderStartTime
+            const currentTime = Date.now()
+            let interval = nextFrameTime - currentTime - renderTime
+            if (interval <= 0) {
+              interval = 1
+            }
+            frameTimer = setTimeout(frame, interval)
+          }
+        } else {
+          t = 0
+          log('time has been reset')
+        }
+      }
+
+      function evaluate (code, x, y, t) {
+        if (code.length > MAX_CODE_LEN) {
+          error('Code contains ' + text.value.length +
+                ' bytes; must not exceed ' + MAX_CODE_LEN)
+          return null
+        }
+
+        const ds = [] // Data stack.
+        const ls = [] // Loop stack.
+        let dCount = 0
+        let lCount = 0
+        let mode = 0
+        let idx = 0
+        let ops = 0
+        let frameInterval = DEFAULT_FRAME_INTERVAL
+
+        ds.length = DATA_STACK_SIZE
+        ls.length = LOOP_STACK_SIZE
+
+        while (idx < code.length) {
+          const op = code.charAt(idx)
+          if (/^[XYTN]$/.test(op)) { // Push X, Y, T, N.
+            if (dCount === DATA_STACK_SIZE) {
+              stackOverflowError(x, y, t, idx, op)
+              return null
+            }
+            if (op === 'X') {
+              ds[dCount] = x
+            } else if (op === 'Y') {
+              ds[dCount] = y
+            } else if (op === 'T') {
+              ds[dCount] = t
+            } else if (op === 'N') {
+              ds[dCount] = 0
+            }
+            ++dCount
+            ++idx
+          } else if (/^[0-9]$/.test(op)) { // Add decimal digit.
+            if (dCount === 0) {
+              stackEmptyError(x, y, t, idx, op)
+              return null
+            }
+            const a = ds[dCount - 1]
+            const b = +op
+            const c = 10 * a + b
+            if (c > MAX_VAL) {
+              maxValueError(x, y, t, idx, op, c, MAX_VAL)
+              return null
+            } else if (c < MIN_VAL) {
+              minValueError(x, y, t, idx, op, c, MIN_VAL)
+              return null
+            }
+            ds[dCount - 1] = c
+            ++idx
+          } else if (op === 'C') { // Clip value.
+            if (dCount === 0) {
+              stackEmptyError(x, y, t, idx, op)
+              return null
+            }
+            let a = ds[dCount - 1]
+            if (a > 255) {
+              a = 255
+            } else if (a < 0) {
+              a = 0
+            }
+            ds[dCount - 1] = a
+            ++idx
+          } else if (op === 'D') { // Duplicate.
+            if (dCount === 0) {
+              stackEmptyError(x, y, t, idx, op)
+              return null
+            } else if (dCount === DATA_STACK_SIZE) {
+              stackOverflowError(x, y, t, idx, op)
+              return null
+            }
+            ds[dCount] = ds[dCount - 1]
+            ++dCount
+            ++idx
+          } else if (op === 'P') { // Pop.
+            if (dCount === 0) {
+              stackEmptyError(x, y, t, idx, op)
+              return null
+            }
+            --dCount
+            ++idx
+          } else if (op === 'S') { // Swap.
+            if (dCount < 2) {
+              stackUnderflowError(x, y, t, idx, op, dCount, 2)
+              return null
+            }
+            const a = ds[dCount - 2]
+            ds[dCount - 2] = ds[dCount - 1]
+            ds[dCount - 1] = a
+            ++idx
+          } else if (op === 'R') { // Rotate.
+            if (dCount < 3) {
+              stackUnderflowError(x, y, t, idx, op, dCount, 2)
+              return null
+            }
+            const a = ds[dCount - 3]
+            ds[dCount - 3] = ds[dCount - 2]
+            ds[dCount - 2] = ds[dCount - 1]
+            ds[dCount - 1] = a
+            ++idx
+          } else if (op === '!') { // Invert.
+            if (dCount === 0) {
+              stackEmptyError(x, y, t, idx, op)
+              return null
+            }
+            const a = ds[dCount - 1]
+            ds[dCount - 1] = a === 0 ? 1 : 0
+            ++idx
+          } else if (/^[+\-*^&|=<>/%]$/.test(op)) { // Binary operations.
+            if (dCount < 2) {
+              stackUnderflowError(x, y, t, idx, op, dCount, 2)
+              return null
+            }
+            const a = ds[dCount - 2]
+            const b = ds[dCount - 1]
+            let c
+            if (op === '+') { // Add.
+              c = a + b
+            } else if (op === '-') { // Subtract.
+              c = a - b
+            } else if (op === '*') { // Multiply.
+              c = a * b
+            } else if (op === '^') { // Bitwise XOR.
+              c = a ^ b
+            } else if (op === '&') { // Bitwise AND.
+              c = a & b
+            } else if (op === '|') { // Bitwise OR.
+              c = a | b
+            } else if (op === '=') { // Equals.
+              c = a === b ? 1 : 0
+            } else if (op === '<') { // Less Than.
+              c = a < b ? 1 : 0
+            } else if (op === '>') { // Greater Than.
+              c = a > b ? 1 : 0
+            } else if (b === 0) { // Divide by Zero Check.
+              if (mode === 0) {
+                opError(x, y, t, idx, op, 'division by zero')
+                return null
+              } else if (mode === 1) {
+                return [0, 0, 0, ops, frameInterval]
+              } else if (mode === 2) {
+                return [255, 0, 0, ops, frameInterval]
+              }
+              return null
+            } else if (op === '/') { // Divide.
+              c = Math.trunc(a / b)
+            } else if (op === '%') { // Mod.
+              c = a % b
+              if (c < 0) {
+                c += Math.abs(b)
+              }
+            }
+            if (c > MAX_VAL) {
+              maxValueError(x, y, t, idx, op, c, MAX_VAL)
+              return null
+            } else if (c < MIN_VAL) {
+              minValueError(x, y, t, idx, op, c, MIN_VAL)
+              return null
+            }
+            ds[dCount - 2] = c
+            --dCount
+            ++idx
+          } else if (op === '[') { // Begin loop.
+            if (dCount === 0) {
+              stackEmptyError(x, y, t, idx, op)
+              return null
+            }
+            const a = ds[dCount - 1]
+            --dCount
+            if (a > 0) { // Enter loop.
+              if (lCount === LOOP_STACK_SIZE) {
+                opError(x, y, t, idx, op,
+                  'active loop depth exceeds ' + LOOP_STACK_SIZE)
+                return null
+              }
+              ls[lCount] = [idx + 1, a]
+              ++lCount
+              ++idx
+            } else { // Skip loop.
+              let depth = 1
+              ++idx
+              while (depth !== 0 && idx < code.length) {
+                const ch = code.charAt(idx)
+                if (ch === '[') {
+                  ++depth
+                } else if (ch === ']') {
+                  --depth
+                }
+                ++idx
+              }
+            }
+          } else if (op === ']') { // Close loop.
+            if (lCount === 0) {
+              opError(x, y, t, idx, op, 'is unexpected')
+              return null
+            }
+            const jmpIdx = ls[lCount - 1][0]
+            const a = ls[lCount - 1][1] - 1
+            if (a > 0) {
+              ls[lCount - 1][1] = a
+              idx = jmpIdx
+            } else {
+              --lCount
+              ++idx
+            }
+          } else if (op === 'W') { // Write stack and halt.
+            writeStack(x, y, t, ds, dCount)
+            return null
+          } else if (op === 'F') { // Set frame interval.
+            if (dCount === 0) {
+              stackEmptyError(x, y, t, idx, op)
+              return null
+            }
+            frameInterval = ds[dCount - 1]
+            --dCount
+            ++idx
+          } else if (op === 'M') { // Set mode.
+            ++mode
+            if (mode < 0 || mode > 2) {
+              opError(x, y, t, idx, op, 'incorrect mode value ' + mode)
+              return null
+            }
+            ++idx
+          } else {
+            opError(x, y, t, idx, op, 'unknown operator')
+            return null
+          }
+
+          ++ops
+
+          if (ops > MAX_OPS) {
+            opError(x, y, t, idx, op, 'number of operations exceed ' + MAX_OPS)
+            return null
+          }
+        }
+
+        // Return RGB values.
+        if (dCount >= 3) {
+          return [ds[dCount - 3], ds[dCount - 2], ds[dCount - 1], ops, frameInterval]
+        } else if (dCount === 2) {
+          return [0, ds[dCount - 2], ds[dCount - 1], ops, frameInterval]
+        } else if (dCount === 1) {
+          return [0, 0, ds[dCount - 1], ops, frameInterval]
+        } else {
+          return [0, 0, 0, ops, frameInterval]
+        }
+      }
+
+      function validateColor (r, g, b, x, y, t) {
+        const channels = ['Red', r, 'Green', g, 'Blue', b]
+        for (let i = 0; i < channels.length; i += 2) {
+          const channel = channels[i]
+          const value = channels[i + 1]
+          if (value < 0) {
+            colorError(x, y, t, channel, value, 'is negative')
+            return false
+          }
+          if (value > 255) {
+            colorError(x, y, t, channel, value, 'exceeds 255')
+            return false
+          }
+        }
+        return true
+      }
+
+      function writeStack (x, y, t, ds, dCount) {
+        const coords = coordinates(x, y, t)
+        let dss = '['
+        for (let i = 0; i < dCount; ++i) {
+          dss += ds[i] + (i === dCount - 1 ? '' : ', ')
+        }
+        dss += ']'
+        status.innerHTML = coords + ' -> ' + dss
+      }
+
+      function stackOverflowError (x, y, t, idx, op) {
+        opError(x, y, t, idx, op, 'found full stack')
+      }
+
+      function stackUnderflowError (x, y, t, idx, op, hasCount, minCount) {
+        const hasNoun = hasCount === 1 ? ' value' : ' values'
+        opError(x, y, t, idx, op, 'found ' + hasCount + hasNoun +
+                ' on stack; needs ' + minCount)
+      }
+
+      function stackEmptyError (x, y, t, idx, op) {
+        opError(x, y, t, idx, op, 'found empty stack')
+      }
+
+      function maxValueError (x, y, t, idx, op, result, maxValue) {
+        opError(x, y, t, idx, op, 'result ' + result +
+                ' exceeds ' + maxValue)
+      }
+
+      function minValueError (x, y, t, idx, op, result, minValue) {
+        opError(x, y, t, idx, op, 'result ' + result +
+                ' is less than ' + minValue)
+      }
+
+      function opError (x, y, t, idx, op, msg) {
+        const coords = coordinates(x, y, t) + ': '
+        const pos = (idx + 1) + ': '
+        error(coords + pos + '&lsquo;' + op + '&rsquo; ' + msg)
+      }
+
+      function colorError (x, y, t, channel, value, msg) {
+        const coords = coordinates(x, y, t) + ': '
+        error(coords + channel + ' value ' + value + ' ' + msg)
+      }
+
+      function coordinates (x, y, t) {
+        const coords = '(' + x + ', ' + y
+        if (tDependent) {
+          return coords + ', ' + t + ')'
+        } else {
+          return coords + ')'
+        }
+      }
+
+      function error (msg) {
+        ctx.fillStyle = '#c00'
+        ctx.fillRect(0, 0, GRID_SIZE * SCALE, GRID_SIZE * SCALE)
+        status.innerHTML = 'ERROR: ' + msg
+        log('ERROR: ' + msg)
+      }
+
+      function plot (x, y, r, g, b) {
+        ctx.fillStyle = 'rgb(' + r + ', ' + g + ', ' + b + ')'
+        ctx.fillRect(x * SCALE, (GRID_SIZE - 1 - y) * SCALE, SCALE, SCALE)
+      }
+
+      function initEncoderMaps () {
+        for (let i = 0; i < OPS.length; ++i) {
+          const op = OPS[i]
+          const alias = ENC[i]
+          if (typeof ALIAS[op] !== 'undefined') {
+            error('Duplicate operator &lsquo;' + op + '&rsquo;')
+            return null
+          }
+          if (typeof OP[alias] !== 'undefined') {
+            error('Duplicate encoding &lsquo;' + alias + '&rsquo;')
+            return null
+          }
+          ALIAS[op] = alias
+          OP[alias] = op
+        }
+        return true
+      }
+
+      function actionHash () {
+        if (window.location.hash.length > 1) {
+          const code = urlDecode(window.location.hash.substring(1))
+          if (code === null) {
+            return
+          }
+          if (code !== text.value) {
+            text.value = code
+            log('set code from hash:', text.value)
+          }
+        }
+        normalizeDraw()
+      }
+
+      function actionKey (e) {
+        if (e.key !== 'Shift') {
+          setTimeout(normalizeDraw, 10)
+        }
+      }
+
+      function normalizeDraw () {
+        sanitizeText()
+        updateCode()
+        if (questioned) {
+          toggleHelp()
+          questioned = false
+        } else {
+          restartDrawOnChange()
+        }
+      }
+
+      function sanitizeText () {
+        let cursorStart = text.selectionStart
+        let cursorEnd = text.selectionEnd
+        const cursorDir = text.selectionDirection
+
+        let result = ''
+        for (let i = 0; i < text.value.length; ++i) {
+          const ch = text.value.charAt(i).toUpperCase()
+          const alias = ALIAS[ch]
+          if (typeof alias !== 'undefined') {
+            result += ch
+            continue
+          }
+          if (ch === '?') {
+            questioned = true
+          }
+          // Since non-command characters are being removed from the
+          // code, adjust the cursor position accordingly.
+          if (i < cursorStart) {
+            --cursorStart
+          }
+          if (i < cursorEnd) {
+            --cursorEnd
+          }
+        }
+
+        if (result !== text.value) {
+          text.value = result
+          text.setSelectionRange(cursorStart, cursorEnd, cursorDir)
+        }
+      }
+
+      function updateCode () {
+        codeText = text.value
+        tDependent = codeText.indexOf('T') !== -1
+
+        if (codeText.length > MAX_DIST_LEN) {
+          window.history.replaceState(null, '', '#')
+          log('cleared hash because code length', codeText.length, 'exceeds', MAX_DIST_LEN)
+        } else {
+          const encoded = urlEncode(codeText)
+          const hash = window.location.hash
+          const fragment = hash === '' ? '' : hash.substring(1)
+          if (encoded !== fragment) {
+            window.history.replaceState(null, '', '#' + encoded)
+            log('set hash from code:', window.location.hash)
+          }
+        }
+      }
+
+      function actionTime (e) {
+        e.preventDefault()
+        if (!tDependent) {
+          nonTWarning()
+          return
+        }
+        const button = document.getElementById('time')
+        if (paused) {
+          paused = false
+          button.title = 'Pause T'
+          button.innerHTML = '&#x25a0;'
+          nextDraw()
+        } else {
+          stopDraw()
+          paused = true
+          button.title = 'Resume T'
+          button.innerHTML = '&#x25ba;'
+        }
+      }
+
+      function nonTWarning () {
+        const oldMsg = status.innerHTML
+        status.innerHTML = 'Code does not depend on &lsquo;T&rsquo;.'
+        const newMsg = status.innerHTML
+        setTimeout(function () {
+          if (status.innerHTML === newMsg) {
+            status.innerHTML = oldMsg
+          }
+        }, 1500)
+      }
+
+      function actionForward (e) {
+        e.preventDefault()
+        if (!tDependent) {
+          nonTWarning()
+          return
+        }
+        log('forward time')
+        stopDraw()
+        nextDraw()
+      }
+
+      function actionBack (e) {
+        e.preventDefault()
+        if (!tDependent) {
+          nonTWarning()
+          return
+        }
+        t -= 2
+        if (t < 0) {
+          t += MAX_T + 1
+        }
+        log('backward time')
+        stopDraw()
+        nextDraw()
+      }
+
+      function actionClear (e) {
+        e.preventDefault()
+        text.value = ''
+        text.focus()
+        updateCode()
+        restartDrawOnChange()
+      }
+
+      function actionDelete (e) {
+        e.preventDefault()
+        deleteText()
+        restartDrawOnChange()
+      }
+
+      function actionHelp (e) {
+        e.preventDefault()
+        toggleHelp()
+        text.focus()
+      }
+
+      function toggleHelp () {
+        const buttonHelp = document.getElementById('help')
+        if (info.style.display === 'none') {
+          stopDraw()
+          canvas.style.display = 'none'
+          info.style.display = 'block'
+          buttonHelp.title = 'Hide help'
+          status.innerHTML = 'Type &lsquo;?&rsquo; or code to hide help.'
+          log('help displayed')
+        } else {
+          startDraw()
+        }
+      }
+
+      function clearHelp () {
+        const buttonHelp = document.getElementById('help')
+        canvas.style.display = 'block'
+        info.style.display = 'none'
+        buttonHelp.title = 'Show help'
+        log('help cleared')
+      }
+
+      function insertText (ch) {
+        const cursorStart = text.selectionStart
+        const left = text.value.substring(0, cursorStart)
+        const right = text.value.substring(text.selectionEnd)
+        text.value = left + ch + right
+        text.focus()
+        text.setSelectionRange(cursorStart + 1, cursorStart + 1)
+        updateCode()
+      }
+
+      function deleteText () {
+        let cursorStart = text.selectionStart
+        let left
+        const right = text.value.substring(text.selectionEnd)
+        if (text.selectionEnd > cursorStart) {
+          left = text.value.substring(0, cursorStart)
+        } else if (cursorStart > 0) {
+          left = text.value.substring(0, cursorStart - 1)
+          --cursorStart
+        } else {
+          left = ''
+        }
+        text.value = left + right
+        text.focus()
+        text.setSelectionRange(cursorStart, cursorStart)
+        updateCode()
+      }
+
+      function urlEncode (s) {
+        let result = ''
+        for (let i = 0; i < s.length; i++) {
+          const alias = ALIAS[s.charAt(i)]
+          if (typeof alias === 'undefined') {
+            return ''
+          }
+          result += alias
+        }
+        return result
+      }
+
+      function urlDecode (s) {
+        let result = ''
+        for (let i = 0; i < s.length; i++) {
+          const op = OP[s.charAt(i)]
+          if (typeof op === 'undefined') {
+            error('Code embedded in URL has invalid characters')
+            return null
+          }
+          result += op
+        }
+        return result
+      }
+
+      function log () {
+        if (LOGGING) {
+          const args = Array.prototype.slice.call(arguments)
+          const ts = startTime === null ? '-' : ((Date.now() - startTime) / 1000)
+          const ft = frameTimer === null ? '-' : frameTimer
+          const tt = t === null ? '-' : t
+          console.log('[' + ts + '] (' + ft + ') t=' + tt + ' paused=' +
+                      paused + ' ' + args.join(' '))
+        }
+      }
+
+      function test () {
+        assertEqual(evaluate('', 1, 2, 3), [0, 0, 0, 0, 100])
+
+        assertEqual(evaluate('X', 1, 2, 3), [0, 0, 1, 1, 100])
+        assertEqual(evaluate('Y', 1, 2, 3), [0, 0, 2, 1, 100])
+        assertEqual(evaluate('T', 1, 2, 3), [0, 0, 3, 1, 100])
+        assertEqual(evaluate('XY', 1, 2, 3), [0, 1, 2, 2, 100])
+        assertEqual(evaluate('XYT', 1, 2, 3), [1, 2, 3, 3, 100])
+        assertEqual(evaluate('XYTXYTXY', 1, 2, 3), [3, 1, 2, 8, 100])
+
+        assertEqual(evaluate('N1', 1, 2, 3), [0, 0, 1, 2, 100])
+        assertEqual(evaluate('N2', 1, 2, 3), [0, 0, 2, 2, 100])
+        assertEqual(evaluate('N3', 1, 2, 3), [0, 0, 3, 2, 100])
+        assertEqual(evaluate('N4', 1, 2, 3), [0, 0, 4, 2, 100])
+        assertEqual(evaluate('N5', 1, 2, 3), [0, 0, 5, 2, 100])
+        assertEqual(evaluate('N6', 1, 2, 3), [0, 0, 6, 2, 100])
+        assertEqual(evaluate('N7', 1, 2, 3), [0, 0, 7, 2, 100])
+        assertEqual(evaluate('N8', 1, 2, 3), [0, 0, 8, 2, 100])
+        assertEqual(evaluate('N9', 1, 2, 3), [0, 0, 9, 2, 100])
+        assertEqual(evaluate('N8N9', 1, 2, 3), [0, 8, 9, 4, 100])
+        assertEqual(evaluate('N7N8N9', 1, 2, 3), [7, 8, 9, 6, 100])
+        assertEqual(evaluate('N0N1N2N3N4N5N6N7', 1, 2, 3), [5, 6, 7, 16, 100])
+        assertEqual(evaluate('N4N4N4N4***N1-', 1, 2, 3), [0, 0, 255, 14, 100])
+
+        assertEqual(evaluate('XYD', 1, 2, 3), [1, 2, 2, 3, 100])
+        assertEqual(evaluate('N4N5N6D', 1, 2, 3), [5, 6, 6, 7, 100])
+        assertEqual(evaluate('XYP', 1, 2, 3), [0, 0, 1, 3, 100])
+        assertEqual(evaluate('XYS', 1, 2, 3), [0, 2, 1, 3, 100])
+        assertEqual(evaluate('XYTS', 1, 2, 3), [1, 3, 2, 4, 100])
+        assertEqual(evaluate('XYTR', 1, 2, 3), [2, 3, 1, 4, 100])
+        assertEqual(evaluate('N9XYTR', 1, 2, 3), [2, 3, 1, 6, 100])
+        assertEqual(evaluate('N9XYTRP', 1, 2, 3), [9, 2, 3, 7, 100])
+
+        assertEqual(evaluate('XY+', 1, 2, 3), [0, 0, 3, 3, 100])
+        assertEqual(evaluate('N1N1+', 1, 2, 3), [0, 0, 2, 5, 100])
+        assertEqual(evaluate('XYT++', 1, 2, 3), [0, 0, 6, 5, 100])
+        assertEqual(evaluate('XY+', MAX_VAL - 10, 10, 3), [0, 0, MAX_VAL, 3, 100])
+        assertEqual(evaluate('XY-', 1, 2, 3), [0, 0, -1, 3, 100])
+        assertEqual(evaluate('XY*', 3, 2, 1), [0, 0, 6, 3, 100])
+        assertEqual(evaluate('XY*', -3, 2, 1), [0, 0, -6, 3, 100])
+        assertEqual(evaluate('XY*', 3, -2, 1), [0, 0, -6, 3, 100])
+        assertEqual(evaluate('XY*', -3, -2, 1), [0, 0, 6, 3, 100])
+        assertEqual(evaluate('XY/', 4, 2, 1), [0, 0, 2, 3, 100])
+        assertEqual(evaluate('XY/', 4, 3, 1), [0, 0, 1, 3, 100])
+        assertEqual(evaluate('XY/', -4, 3, 1), [0, 0, -1, 3, 100])
+        assertEqual(evaluate('XY/', 4, -3, 1), [0, 0, -1, 3, 100])
+        assertEqual(evaluate('XY/', 4, 5, 1), [0, 0, 0, 3, 100])
+        assertEqual(evaluate('XY%', 4, 5, 1), [0, 0, 4, 3, 100])
+        assertEqual(evaluate('XY%', 7, 5, 1), [0, 0, 2, 3, 100])
+        assertEqual(evaluate('XY%', 7, -5, 1), [0, 0, 2, 3, 100])
+        assertEqual(evaluate('XY%', -7, 5, 1), [0, 0, 3, 3, 100])
+        assertEqual(evaluate('XY%', -7, -5, 1), [0, 0, 3, 3, 100])
+        assertEqual(evaluate('XY^', 1, 3, 2), [0, 0, 2, 3, 100])
+        assertEqual(evaluate('XY&', 1, 3, 2), [0, 0, 1, 3, 100])
+        assertEqual(evaluate('XY|', 1, 3, 2), [0, 0, 3, 3, 100])
+        assertEqual(evaluate('X!', 0, 2, 3), [0, 0, 1, 2, 100])
+        assertEqual(evaluate('X!', 1, 2, 3), [0, 0, 0, 2, 100])
+        assertEqual(evaluate('Y!', 1, 2, 3), [0, 0, 0, 2, 100])
+        assertEqual(evaluate('T!', 1, 2, 3), [0, 0, 0, 2, 100])
+        assertEqual(evaluate('X!', -1, 2, 3), [0, 0, 0, 2, 100])
+        assertEqual(evaluate('X!', -2, 2, 3), [0, 0, 0, 2, 100])
+        assertEqual(evaluate('X!!', 2, 2, 3), [0, 0, 1, 3, 100])
+        assertEqual(evaluate('XY=', 1, 2, 3), [0, 0, 0, 3, 100])
+        assertEqual(evaluate('XX=', 1, 2, 3), [0, 0, 1, 3, 100])
+        assertEqual(evaluate('XY<', 1, 2, 3), [0, 0, 1, 3, 100])
+        assertEqual(evaluate('XY>', 1, 2, 3), [0, 0, 0, 3, 100])
+
+        assertEqual(evaluate('XN0[N1+]', 1, 2, 3), [0, 0, 1, 4, 100])
+        assertEqual(evaluate('XN0N1-[N1+]', 1, 2, 3), [0, 0, 1, 7, 100])
+        assertEqual(evaluate('XN1[N1+]', 1, 2, 3), [0, 0, 2, 8, 100])
+        assertEqual(evaluate('N2N3[N4+]', 1, 2, 3), [0, 0, 14, 17, 100])
+        assertEqual(evaluate('XTX-[N9+]', 1, 2, 3), [0, 0, 19, 13, 100])
+        assertEqual(evaluate('XTX-[N9+]X', 1, 2, 3), [0, 19, 1, 14, 100])
+        assertEqual(evaluate('XX-[N4+]', 1, 2, 3), [0, 0, 0, 4, 100])
+        assertEqual(evaluate('XX-[N4+]X', 1, 2, 3), [0, 0, 1, 5, 100])
+        assertEqual(evaluate('N0N2[N3[N1+]]', 1, 2, 3), [0, 0, 6, 37, 100])
+        assertEqual(evaluate('N0N2[N3[N4[N1+]]]', 1, 2, 3), [0, 0, 24, 133, 100])
+
+        // Data stack overflow/underflow.
+        assertEqual(evaluate('XYTXYTXYT', 1, 2, 3), null)
+        assertEqual(evaluate('NNNNNNNNN', 1, 2, 3), null)
+        assertEqual(evaluate('N0N1N2N3N4N5N6N7N8', 1, 2, 3), null)
+        assertEqual(evaluate('N0N1N2N3N4N5N6N7ND', 1, 2, 3), null)
+        assertEqual(evaluate('P', 1, 2, 3), null)
+        assertEqual(evaluate('XYR', 1, 2, 3), null)
+        assertEqual(evaluate('XS', 1, 2, 3), null)
+        assertEqual(evaluate('X+', 1, 2, 3), null)
+        assertEqual(evaluate('TX-[N1+]', 1, 2, 3), null)
+
+        // Loop overflow.
+        assertEqual(evaluate('N0N1[N1[N1[N1[N1[N1[N1[N1[N1[N1+]]]]]]]]]', 1, 2, 3), null)
+
+        // Out of range.
+        assertEqual(evaluate('XYT+++', 1, 2, 3), null)
+        assertEqual(evaluate('XY+', MAX_VAL - 10, 11, 3), null)
+        assertEqual(evaluate('XY-', MIN_VAL + 10, 11, 3), null)
+        assertEqual(evaluate('XY*', Math.floor(MAX_VAL / 2), 4, 3), null)
+        assertEqual(evaluate('XY*', -Math.floor(MAX_VAL / 2), -4, 3), null)
+        assertEqual(evaluate('XY*', Math.floor(MIN_VAL / 2), 4, 3), null)
+        assertEqual(evaluate('XY*', -Math.floor(MIN_VAL / 2), -4, 3), null)
+        assertEqual(evaluate('XY/', 1, 0, 3), null)
+        assertEqual(evaluate('XY%', 1, 0, 3), null)
+
+        // Final.
+        assertEqual(evaluate('XYT', 1, 2, 3, 3), [1, 2, 3, 3, 100])
+        console.log('PASS')
+      }
+
+      function assertEqual (result, expected) {
+        console.log('assert:', result, expected)
+        if (result === null && expected === null) {
+          return
+        }
+        if (result.length !== expected.length) {
+          throw new Error('Incorrect length')
+        }
+        for (let i = 0; i < result.length; ++i) {
+          if (result[i] !== expected[i]) {
+            throw new Error('Incorrect value result[' + i + '] = ' + result[i])
+          }
+        }
+      }
+
+      window.addEventListener('load', init)
+    </script>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <section id="info">
+      <p><strong>COMMANDS</strong></p>
+      <table>
+        <tr>
+          <td><code>X</code></td>
+          <td>
+            Push x-coordinate value of the current cell to the data
+            stack.  The cells on the leftmost edge of the canvas have
+            0 as their x-coordinate values.  The cells on the
+            rightmost edge of the canvas have 255 as their
+            x-coordinate values.
+          </td>
+        </tr>
+        <tr>
+          <td><code>Y</code></td>
+          <td>
+            Push y-coordinate value of the current cell to the data
+            stack.  The cells on the bottommost edge of the canvas
+            have 0 as their y-coordinate values.  The cells on the
+            topmost edge of the canvas have 255 as their y-coordinate
+            values.
+          </td>
+        </tr>
+        <tr>
+          <td><code>T</code></td>
+          <td>
+            Push t-value of the current iteration of evaluation to the
+            data stack.  Any code containing this command is rendered
+            in 256 iterations where t takes integer values from 0 to
+            255.
+          </td>
+        </tr>
+        <tr>
+          <td><code>N</code></td>
+          <td>Push 0 to the data stack.</td>
+        </tr>
+        <tr>
+          <td><code>0</code>-<code>9</code></td>
+          <td>
+            Multiply the value at the top of the stack with 10 and add
+            the given number to it.  In other words, append digit to
+            the value at the top of the data stack.  For example, if
+            the value at the top of the stack is 20, then the
+            command <code>3</code> changes that value to 203.
+          </td>
+        </tr>
+        <tr>
+          <td><code>+</code></td>
+          <td>
+            Pop two values from the data stack and push their sum to
+            the data stack.
+          </td>
+        </tr>
+        <tr>
+          <td><code>-</code></td>
+          <td>
+            Pop two values from the data stack.  Then subtract the
+            value popped first from the value popped second and push
+            the result to the data stack.
+          </td>
+        </tr>
+        <tr>
+          <td><code>*</code></td>
+          <td>Pop two values from the data stack and push their
+          product.</td>
+        </tr>
+        <tr>
+          <td><code>/</code></td>
+          <td>
+            Pop two values from the data stack.  Then use the value
+            popped first to divide the value popped second, discard
+            fractional part from the result, and push the integer
+            result to the data stack.
+          </td>
+        </tr>
+        <tr>
+          <td><code>%</code></td>
+          <td>
+            Pop two values from the data stack.  Then use the value
+            popped first to divide the value popped second, obtain a
+            nonnegative remainder, and push the remainder to the data
+            stack.
+          </td>
+        </tr>
+        <tr>
+          <td><code>=</code></td>
+          <td>
+            Pop two values from the data stack.  If they are equal,
+            push 1 to the data stack.  Otherwise push 0.
+          </td>
+        </tr>
+        <tr>
+          <td><code>&lt;</code></td>
+          <td>
+            Pop two values from the data stack.  If the value popped
+            second is less than the value popped first, push 1 to the
+            data stack.  Otherwise push 0.
+          </td>
+        </tr>
+        <tr>
+          <td><code>&gt;</code></td>
+          <td>
+            Pop two values from the data stack.  If the value popped
+            second is greater than the value popped first, push 1 to
+            the data stack.  Otherwise push 0.
+          </td>
+        </tr>
+        <tr>
+          <td><code>!</code></td>
+          <td>
+            If the value at the top of the data stack is 0, change it
+            to 1.  Otherwise change it to 0.
+          </td>
+        </tr>
+        <tr>
+          <td><code>^</code></td>
+          <td>
+            Pop two values from the data stack, perform bitwise XOR
+            operation on the values, and push the result to the data
+            stack.
+          </td>
+        </tr>
+        <tr>
+          <td><code>&</code></td>
+          <td>
+            Pop two values from the data stack, perform bitwise AND
+            operation on the values, and push the result to the data
+            stack.
+          </td>
+        </tr>
+        <tr>
+          <td><code>|</code></td>
+          <td>
+            Pop two values from the data stack, perform bitwise OR
+            operation on the values, and push the result to the data
+            stack.
+          </td>
+        </tr>
+        <tr>
+          <td><code>C</code></td>
+          <td>
+            Clip the value at the top of the data stack between 0 and
+            255, i.e., if the value is less than 0, change the value
+            to 0, and similarly, if the value is greater than 255,
+            change the value to 255.
+          </td>
+        </tr>
+        <tr>
+          <td><code>D</code></td>
+          <td>
+            Duplicate the value at the top of the data stack by
+            pushing a copy of it.
+          </td>
+        </tr>
+        <tr>
+          <td><code>P</code></td>
+          <td>Pop one value from the data stack.</td>
+        </tr>
+        <tr>
+          <td><code>S</code></td>
+          <td>Swap the two values at the top of the data stack.</td>
+        </tr>
+        <tr>
+          <td><code>R</code></td>
+          <td>
+            Rotate the three values at the top of the data stack.  The
+            third value from the top of the stack is brought to top.
+            The value at the top of the stack moves to the second
+            place from the top.  The value at the second place from
+            the top moves to the third place from the top.
+          </td>
+        </tr>
+        <tr>
+          <td><code>[</code></td>
+          <td>
+            Pop one value from the data stack and begin loop with the
+            popped value as the loop counter.  All code from the
+            command after the opening <code>[</code> up to the
+            corresponding <code>]</code> forms the body of the loop.
+            If the loop counter is positive, enter the loop body.
+            Otherwise skip the loop.  The loop counter is maintained
+            in the loop control stack which cannot be accessed
+            directly by the programmer.
+          </td>
+        </tr>
+        <tr>
+          <td><code>]</code></td>
+          <td>
+            Decrement the loop counter.  If the counter is still
+            positive, jump back to the beginning of the loop body of
+            the current loop.  Otherwise exit the loop.  The loop
+            counter is removed from the loop control stack while
+            exiting the loop.
+          </td>
+        </tr>
+        <tr>
+          <td><code>W</code></td>
+          <td>
+            Display current coordinate and stack in the status panel
+            and halt.  The stack is printed from bottom to top.
+          </td>
+        </tr>
+        <tr>
+          <td><code>F</code></td>
+          <td>
+            Pop one value from the top of the stack and set the frame
+            interval to that many number of milliseconds.  The default
+            frame interval is 100 ms.
+          </td>
+        </tr>
+        <tr>
+          <td><code>M</code></td>
+          <td>
+            Increment mode number.  The default mode number is 0.  In
+            mode 0, division by zero leads to an error.  In mode 1,
+            division by zero leads to a black cell.  In mode 2,
+            division by zero leads to a red cell.  It is an error to
+            increment mode value beyond 2.
+          </td>
+        </tr>
+      </table>
+      <p>
+        Visit <a href="https://github.com/susam/fxyt">github.com/susam/fxyt</a>
+        for a complete tutorial.
+      </p>
+    </section>
+    <pre id="status"></pre>
+    <input id="text" inputmode="none" placeholder="Type code here." autofocus>
+    <div id="buttons">
+    </div>
+    <footer>
+      <a href="https://github.com/susam/fxyt">GitHub</a>
+      <a href="https://mastodon.social/@susam">Mastodon</a>
+      <a href="https://susam.net/cfrs.html">CFRS[]</a>
+    </footer>
+  </body>
+</html>

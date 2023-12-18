@@ -1,0 +1,26 @@
+{
+  "name": "fxyt",
+  "version": "0.1.0",
+  "description": "FXYT: A tiny stack-based canvas colouring language",
+  "main": "fxyt.html",
+  "files": [
+    "fxyt.html"
+  ],
+  "keywords": [
+    "game",
+    "graphics",
+    "browser"
+  ],
+  "homepage": "https://github.com/susam/fxyt",
+  "bugs": "https://github.com/susam/fxyt/issues",
+  "license": "MIT",
+  "author": "Susam Pal (https://susam.net/)",
+  "repository": "github:susam/fxyt",
+  "devDependencies": {
+    "standard": "latest",
+    "eslint-plugin-html": "latest"
+  },
+  "scripts": {
+    "lint": "standard --plugin html *.html"
+  }
+}
