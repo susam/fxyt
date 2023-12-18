@@ -21,7 +21,7 @@ The result looks like this:
 
 This project is inspired by Martin Kleppe's [Tixy][TIXY] project.
 While Tixy supports JavaScript expressions to determine the size and
-colour of circles in a 16x16 grid, FYXT comes with its own minimal
+colour of circles in a 16x16 grid, FXYT comes with its own minimal
 stack-based postfix language that is written in postfix notation.
 Further, FXYT provides a 256x256 grid of cells each of which can be
 painted with an arbitrary colour determined by the result of the
@@ -32,7 +32,7 @@ implementation that comes with this project.
 
 [IMG1]: https://susam.github.io/blob/img/fxyt/fxyt-0.1.0-xor.png
 [DEMO1]: https://susam.net/fxyt.html#XYx
-[DEMO2]: https://susam.net/fxyt.html#XYxTN1srN255pTN1sq
+[DEMO2]: https://susam.net/fxyt.html#XYxTN1srN255pTN1sqD
 [TIXY]: https://github.com/aemkei/tixy
 [DRAW1]: https://susam.net/fxyt.html
 
