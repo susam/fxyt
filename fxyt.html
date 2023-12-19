@@ -376,7 +376,7 @@
         // Update status.
         const elapsed = (renderEndTime - startTime) / 1000
         const bytes = codeText.length + (codeText.length === 1 ? ' byte' : ' bytes')
-        const duration = elapsed.toFixed(1) + ' s'
+        const duration = elapsed.toFixed(tDependent ? 1 : 3) + ' s'
 
         if (codeText.length === 0) {
           status.innerHTML = 'READY.  Type &lsquo;?&rsquo; for help.'
