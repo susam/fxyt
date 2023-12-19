@@ -155,8 +155,9 @@ In the remainder of this document, sometimes we will provide examples
 of stack.  Such examples will be written using an array notation where
 the elements that appear on the left are at the bottom of the stack
 and the elements on the right are at the bottom of the stack.  For
-example, a stack that contains (from bottom to top), the values 10,
-20, 30, and 40 will be written as: [10, 20, 30, 40].
+example, a stack that contains (from bottom to top) the values 10, 20,
+30, and 40 will be written as [10, 20, 30, 40].  If we push 50 to this
+stack, we will write the resulting stack as [10, 20, 30, 40, 50].
 
 
 Loop Control Stack
@@ -181,11 +182,6 @@ Commands of FXYT manipulate the data stack.  As mentioned before, the
 input code is evaluated for each cell at (x, y) for time-independent
 code.  If the input code is time-dependent, then it is evaluated for
 each cell at (x, y, t).
-
-For example, the command `X` pushes the x-coordinate value of the
-current cell to the data stack.  Similarly, the command `Y` pushes the
-y-coordinate value of the current cell to the data stack.  The command
-`T` pushes the t-value of the current iteration.
 
 At the end of evaluation of the code for each cell, the top 3 values
 of the data stack is inspected to determine the red, blue, and green
@@ -218,7 +214,7 @@ For example, consider the following code:
 YY
 ```
 
-At the end of evaluation, the dat stack contains only two values, so
+At the end of evaluation, the data stack contains only two values, so
 they decide the values of the blue and green components.  The red
 component is set to 0.  Thus each cell gets a shade of cyan.  Finally
 consider this code:
