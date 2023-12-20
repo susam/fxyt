@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1.0 (UNRELEASED)
+0.1.0 (2023-12-20)
 ------------------
 
 ### Added
@@ -42,4 +42,4 @@ Changelog
 - Button to move backward in time.
 - Button to move forward in time.
 - Embed code that does not exceed 64 characters in the URL.
-- Decode code from the URl and evaluate.
+- Decode code from the URL and evaluate.
