@@ -15,9 +15,15 @@ The result looks like this:
 
 [![Screenshot of XOR pattern][IMG1]][DEMO1]
 
-**[See Demo][DEMO2]**
+See some more demos here:
 
-**[Draw Now][DRAW1]**
+- [Demo 1](https://susam.net/fxyt.html#XYxTN1srN255pTN1sqD)
+- [Demo 2](https://susam.net/fxyt.html#XYaTN1srN255pTN1sqN0)
+- [Demo 3](https://susam.net/fxyt.html#XYoTN1srN255pTN1sqDN0S)
+- [Demo 4](https://susam.net/fxyt.html#XYpTN1srN255pTN1sqD)
+- [Demo 5](https://susam.net/fxyt.html#XYN256sTdrD)
+
+Visit https://susam.net/fxyt.html to write your own code!
 
 This project is inspired by Martin Kleppe's [Tixy][TIXY] project.
 While Tixy supports JavaScript expressions to determine the size and
@@ -32,7 +38,6 @@ implementation that comes with this project.
 
 [IMG1]: https://susam.github.io/blob/img/fxyt/fxyt-0.1.0-xor.png
 [DEMO1]: https://susam.net/fxyt.html#XYx
-[DEMO2]: https://susam.net/fxyt.html#XYxTN1srN255pTN1sqD
 [TIXY]: https://github.com/aemkei/tixy
 [DRAW1]: https://susam.net/fxyt.html
 
