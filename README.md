@@ -395,7 +395,7 @@ a certain cell, the error is ignored and the cell is painted red
 instead.
 
 The command `M` can be used to change modes.  Each `M` increments the
-mode number.
+mode number.  It is an error to increment the mode number to 3.
 
 The following code demonstrates the default behaviour which leads to
 an error because a division by zero occurs at the coordinate (0, 0):
