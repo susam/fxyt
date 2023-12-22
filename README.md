@@ -159,7 +159,7 @@ when the stack is full.
 In the remainder of this document, sometimes we will provide examples
 of stack.  Such examples will be written using an array notation where
 the elements that appear on the left are at the bottom of the stack
-and the elements on the right are at the bottom of the stack.  For
+and the elements on the right are at the top of the stack.  For
 example, a stack that contains (from bottom to top) the values 10, 20,
 30, and 40 will be written as [10, 20, 30, 40].  If we push 50 to this
 stack, we will write the resulting stack as [10, 20, 30, 40, 50].
