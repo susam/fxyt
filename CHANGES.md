@@ -1,6 +1,20 @@
 Changelog
 =========
 
+0.2.0 (UNRELEASED)
+------------------
+
+### Changed
+
+- The frame interval set during the evaluation of the code at cell (0,
+  0) determines the frame interval of the next iteration of
+  evaluation.  The frame interval set during the evaluation of the
+  code at other cells is ignored.
+- Negative frame interval is considered an error.
+- The README now clearly specifies that incrementing mode number to 3
+  is an error.
+
+
 0.1.0 (2023-12-20)
 ------------------
 

@@ -1,5 +1,5 @@
 <!--
-  FXYT 0.1.0
+  FXYT 0.2.0-dev1
   Copyright (c) 2023 Susam Pal
   Source: https://github.com/susam/cfr
   License: MIT
@@ -355,7 +355,7 @@
 
         // Paint canvas.
         const renderStartTime = Date.now()
-        let frameInterval
+        let nextFrameInterval
         ctx.fillStyle = 'rgb(0, 0, 0)'
         ctx.fillRect(0, 0, GRID_SIZE * SCALE, GRID_SIZE * SCALE)
         for (let x = 0; x < GRID_SIZE; ++x) {
@@ -364,7 +364,9 @@
             if (result === null) {
               return
             }
-            frameInterval = result[4]
+            if (x === 0 && y === 0) {
+              nextFrameInterval = result[4]
+            }
             if (validateColor(result[0], result[1], result[2], x, y, t) === false) {
               return
             }
@@ -392,7 +394,7 @@
         if (tDependent && t < MAX_T) {
           ++t
           if (!paused) {
-            nextFrameTime += frameInterval
+            nextFrameTime += nextFrameInterval
             const renderTime = renderEndTime - renderStartTime
             const currentTime = Date.now()
             let interval = nextFrameTime - currentTime - renderTime
@@ -555,7 +557,6 @@
               } else if (mode === 2) {
                 return [255, 0, 0, ops, frameInterval]
               }
-              return null
             } else if (op === '/') { // Divide.
               c = Math.trunc(a / b)
             } else if (op === '%') { // Mod.
@@ -625,7 +626,12 @@
               stackEmptyError(x, y, t, idx, op)
               return null
             }
-            frameInterval = ds[dCount - 1]
+            const a = ds[dCount - 1]
+            if (a < 0) {
+              opError(x, y, t, idx, op, 'interval ' + a + ' is negative')
+              return
+            }
+            frameInterval = a
             --dCount
             ++idx
           } else if (op === 'M') { // Set mode.

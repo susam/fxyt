@@ -638,8 +638,12 @@ The frame interval determines the time interval between two
 consecutive iterations of the evaluator for time-dependent code.  The
 default frame interval is 100 ms.  The frame interval may be changed
 with the command `F`.  This command pops an integer value from the top
-of the data stack and sets the frame interval to that many number of
-milliseconds.
+of the data stack.  It is an error if the popped value is negative.
+If the popped value is nonnegative, it is considered to be a candidate
+frame interval expressed in milliseconds.  The frame interval thus
+obtained during the evaluation of the cell (0, 0) is set as the frame
+interval between the current iteration and next iteration of
+evaluation.
 
 For example, the following code sets the frame interval to 500 ms and
 executes a time-dependent code:
@@ -647,6 +651,23 @@ executes a time-dependent code:
 ```
 N1000FXT^
 ```
+
+Remember that the input code is evaluated for each cell.  It is
+possible to write code such the evaluation of the code for different
+cells leads to different frame intervals.  As explained earlier, it is
+the frame interval set in the evaluation of cell (0, 0) that
+determines the frame interval for the next iteration of evaluation.
+For example, consider the following time-dependent code:
+
+```
+XY+N200+FT
+```
+
+In the above example, the command `F` pops an integer value 200 while
+the code is evaluated at the cell (0, 0).  However it pops an integer
+value 710 when the same code is evaluated at the cell (255, 255).  The
+frame interval for the next iteration of evaluation is thus 200 ms
+(not 710 ms).
 
 The renderer for time-dependent code tries to schedule each iteration
 of the evaluation in such a manner that the average frame interval
