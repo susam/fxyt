@@ -64,7 +64,12 @@ Contents
 * [Frame Interval](#frame-interval)
 * [Print Data Stack](#print-data-stack)
 * [Idioms](#idioms)
-* [Implementation Constraints](#implementation-constraints)
+* [Common Mistakes](#common-mistakes)
+* [Constraints](#constraints)
+* [Distributable Links](#distributable-links)
+* [License](#license)
+* [Support](#support)
+* [More](#more)
 
 
 Coordinates
@@ -746,8 +751,8 @@ Common Mistakes
   while forming a new integer on the data stack.
 
 
-Implementation Constraints
---------------------------
+Constraints
+-----------
 
 The reference implementation that comes with this project enforces the
 following constraints:
