@@ -808,6 +808,19 @@ URL opens it with their web browser, the implementation reads the code
 embedded in the URL, decodes it, and executes it.
 
 
+FAQ
+---
+
+ 1. Can you add feature X to this project?
+
+    I have no intention to add additional features to this project.
+    The language implemented n this project is intentionally minimal.
+    Inspired by esoteric programming languages with concise
+    instruction sets, this tiny drawing language is meant to serve as
+    a challenge for creating interesting visuals using a limited set
+    of commands.
+
+
 License
 -------
 
