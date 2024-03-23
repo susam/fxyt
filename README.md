@@ -21,6 +21,7 @@ See some more demos here:
 - [Demo 3](https://susam.net/fxyt.html#XYoTN1srN255pTN1sqDN0S)
 - [Demo 4](https://susam.net/fxyt.html#XYpTN1srN255pTN1sqD)
 - [Demo 5](https://susam.net/fxyt.html#XYN256sTdrD)
+- [Community Demos](demo.md)
 
 Visit https://susam.net/fxyt.html to write your own code!
 
@@ -836,6 +837,8 @@ See [Andromeda Invaders](https://github.com/susam/invaders), a
 
 See [CFRS[]](https://github.com/susam/cfrs), an extremely minimal
 turtle graphics language with only 6 simple commands.
+
+See [demo.md](demo.md) for FXYT community demos.
 
 
 <!--
