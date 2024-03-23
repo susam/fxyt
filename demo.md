@@ -14,7 +14,7 @@ Contents
 --------
 
 * [Ripples](#ripples)
-* [Dynamic Demos](#dynamic-demos)
+* [Mandelbrot](#mandelbrot)
 
 
 Ripples
