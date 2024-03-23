@@ -24,7 +24,7 @@ Contents
   * [Empty Right Triangle](#empty-right-triangle)
 
 
-Static Demos
+Dynamic Demos
 ------------
 
 ### Ripples
@@ -39,7 +39,7 @@ MXN127-D*YN127-D*+N5/DN2/NN6[RRSDRDRS/+N2/R]PSPTN2*-N20%N12*
 <https://susam.net/fxyt.html#MXN127dDpYN127dDpsN5qDN2qNN6bRRSDRDRSqsN2qRcPSPTN2pdN20rN12p>
 
 
-Dynamic Demos
+Static Demos
 -------------
 
 ### Mandelbrot
