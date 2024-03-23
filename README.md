@@ -67,6 +67,7 @@ Contents
 * [Common Mistakes](#common-mistakes)
 * [Constraints](#constraints)
 * [Distributable Links](#distributable-links)
+* [FAQ](#faq)
 * [License](#license)
 * [Support](#support)
 * [More](#more)
