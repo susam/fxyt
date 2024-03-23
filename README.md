@@ -1,11 +1,10 @@
 FXYT
 ====
 
-FXYT (/fɪksɪt/) is a tiny canvas colouring language that consists of
-36 simple stack-based commands.  The input code is evaluated for each
-cell of a 256x256 graphical canvas.  The colour of each cell is
-determined by the result of the evaluation.  Here is an extremely
-simple FXYT code:
+FXYT is a tiny canvas colouring language that consists of 36 simple
+stack-based commands.  The input code is evaluated for each cell of a
+256x256 graphical canvas.  The colour of each cell is determined by
+the result of the evaluation.  Here is an extremely simple FXYT code:
 
 ```
 XY^
@@ -33,8 +32,8 @@ FXYT provides a 256x256 grid of cells each of which can be painted
 with an arbitrary colour determined by the result of the evaluation of
 the input code.
 
-The following sections describe this language and the reference
-implementation that comes with this project.
+FXYT stands for *function of x, y, and t* and it may be pronounced
+/fɪksɪt/ ("fixit").
 
 [IMG1]: https://susam.github.io/blob/img/fxyt/fxyt-0.1.0-xor.png
 [DEMO1]: https://susam.net/fxyt.html#XYx
