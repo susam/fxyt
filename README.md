@@ -33,6 +33,10 @@ FXYT provides a 256x256 grid of cells each of which can be painted
 with an arbitrary colour determined by the result of the evaluation of
 the input code.
 
+This project is intentionally minimal in nature.  It is intended to be
+a creative code golfing playground that offers the challenge of
+crafting interesting visuals with a limited set of commands.
+
 FXYT stands for *function of x, y, and t* and it may be pronounced
 /fɪksɪt/ ("fixit").
 
@@ -814,9 +818,9 @@ FAQ
 
  1. Can you add feature X to this project?
 
-    I have no intention to add additional features to this project.
-    The language implemented n this project is intentionally minimal.
-    Inspired by esoteric programming languages with concise
+    I have no intention of adding new features to this project.  The
+    language defined and implemented by this project is intentionally
+    minimal.  Inspired by esoteric programming languages with concise
     instruction sets, this tiny drawing language is meant to serve as
     a challenge for creating interesting visuals using a limited set
     of commands.
