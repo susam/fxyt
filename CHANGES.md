@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.3.0 (UNRELEASED)
+------------------
+
+### Fixed
+
+- Ignore embedded code longer than 64 bytes.
+
+
 0.2.0 (2023-12-24)
 ------------------
 
