@@ -1,13 +1,10 @@
 FXYT Community Demos
 =====================
 
-This document contains a collection of demos developed by community
-members.  All of these demos have been contributed by community
-members.
-
-If you create an interesting demo please [create a new post][post] and
-share it.  If the demo looks very interesting, it may be added to this
-document.
+This document contains a collection of demos contributed by community
+members.  If you create an interesting demo please [create a new
+post][post] and share it.  If the demo looks very interesting, it may
+be added to this document.
 
 [README.md]: README.md
 [post]: https://github.com/susam/fxyt/issues/new
@@ -23,7 +20,7 @@ Contents
 Ripples
 -------
 
-Contributed by [TJSomething][].
+Contributed by [TJSomething][] on 22 Dec 2023.
 
 ```
 MXN127-D*YN127-D*+N5/DN2/NN6[RRSDRDRS/+N2/R]PSPTN2*-N20%N12*
@@ -35,7 +32,7 @@ MXN127-D*YN127-D*+N5/DN2/NN6[RRSDRDRS/+N2/R]PSPTN2*-N20%N12*
 Mandelbrot
 ----------
 
-Contributed by [Nick Craig-Wood][].
+Contributed by [Nick Craig-Wood][] on 23 Mar 2024.
 
 ```
 NNNN7[SDD*N1024/RDD*N1024/R+N4096<[RN1+RR]SDD*N1024/RDD*N1024/R+N4096<![PPN4000N4000]SDD*N1024/RDD*N1024/RS-XN128-N12*N512-+RR*N512/YN128-N12*+]PPN30*
