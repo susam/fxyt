@@ -6,7 +6,9 @@ Changelog
 
 ### Fixed
 
-- Ignore embedded code longer than 64 bytes.
+- Ignore code embedded in URL when the code is longer than 64 bytes.
+- Clear help pane on initialisation so that an error during
+  initialisation does not leave the help pane visible.
 
 
 0.2.0 (2023-12-24)
