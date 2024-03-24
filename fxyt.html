@@ -507,7 +507,7 @@
             ++idx
           } else if (op === 'R') { // Rotate.
             if (dCount < 3) {
-              stackUnderflowError(x, y, t, idx, op, dCount, 2)
+              stackUnderflowError(x, y, t, idx, op, dCount, 3)
               return null
             }
             const a = ds[dCount - 3]
