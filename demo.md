@@ -94,6 +94,16 @@ XN99>XN157<&YN99>&YN157<&N255*
 https://susam.net/fxyt.html#XN99gXN157laYN99gaYN157laN255p
 
 
+### Rotated filled square
+
+Contributed by [Greg Oledzki][] on 24 Mar 2024.
+
+```
+XY+N192>XY-N64<&YX-N64<&XY+N320<&00
+```
+
+https://susam.net/fxyt.html#XYsN192gXYdN64laYXdN64laXYsN320la00
+
 ### Empty Square
 
 Contributed by [Greg Oledzki][] on 23 Mar 2024.
