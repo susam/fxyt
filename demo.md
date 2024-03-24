@@ -125,6 +125,23 @@ XY-N0=YN50=|CXN206=|XN49>&XN207<&YN49>YN206<&&00
 
 https://susam.net/fxyt.html#XYdN0eYN50eoCXN206eoXN49gaXN207laYN49gYN206laa00
 
+### Flags
+
+Contributed by [Greg Oledzki][] on 24 Mar 2024.
+
+France:
+```
+XN107>XN192<&N255*XN107>XN151<&N255*XN64>XN151<&N255*
+```
+
+https://susam.net/fxyt.html#XN107gXN192laN255pXN107gXN151laN255pXN64gXN151laN255p
+
+and Italy is just `RR` away
+```
+XN107>XN192<&N255*XN107>XN151<&N255*XN64>XN151<&N255*RR
+```
+
+https://susam.net/fxyt.html#XN107gXN192laN255pXN107gXN151laN255pXN64gXN151laN255pRR
 
 <!-- Authors -->
 
