@@ -62,6 +62,15 @@ XN15%0N0=YN15%0N0=|00
 
 https://susam.net/fxyt.html#XN15r0N0eYN15r0N0eo00
 
+### Checkers pattern
+Contributed by [Greg Oledzki][] on 23 Mar 2024.
+
+```
+XN16/N2%N0=YN16/N2%N1=^N255*
+```
+
+https://susam.net/fxyt.html#XN16qN2rN0eYN16qN2rN1exN255p
+
 
 ### Filled Circle
 
@@ -85,6 +94,16 @@ XN99>XN157<&YN99>&YN157<&N255*
 https://susam.net/fxyt.html#XN99gXN157laYN99gaYN157laN255p
 
 
+### Rotated filled square
+
+Contributed by [Greg Oledzki][] on 24 Mar 2024.
+
+```
+XY+N192>XY-N64<&YX-N64<&XY+N320<&00
+```
+
+https://susam.net/fxyt.html#XYsN192gXYdN64laYXdN64laXYsN320la00
+
 ### Empty Square
 
 Contributed by [Greg Oledzki][] on 23 Mar 2024.
@@ -106,6 +125,23 @@ XY-N0=YN50=|CXN206=|XN49>&XN207<&YN49>YN206<&&00
 
 https://susam.net/fxyt.html#XYdN0eYN50eoCXN206eoXN49gaXN207laYN49gYN206laa00
 
+### Flags
+
+Contributed by [Greg Oledzki][] on 24 Mar 2024.
+
+France:
+```
+XN107>XN192<&N255*XN107>XN151<&N255*XN64>XN151<&N255*
+```
+
+https://susam.net/fxyt.html#XN107gXN192laN255pXN107gXN151laN255pXN64gXN151laN255p
+
+and Italy is just `RR` away
+```
+XN107>XN192<&N255*XN107>XN151<&N255*XN64>XN151<&N255*RR
+```
+
+https://susam.net/fxyt.html#XN107gXN192laN255pXN107gXN151laN255pXN64gXN151laN255pRR
 
 <!-- Authors -->
 
