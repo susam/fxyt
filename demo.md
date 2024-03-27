@@ -20,8 +20,11 @@ Contents
   * [Grid](#grid)
   * [Filled Circle](#filled-circle)
   * [Filled Square](#filled-square)
+  * [Rotated Filled Square](#rotated-filled-square)
   * [Empty Square](#empty-square)
   * [Empty Right Triangle](#empty-right-triangle)
+  * [Flag of France](#flag-of-france)
+  * [Flag of Italy](#flag-of-italy)
 
 
 Dynamic Demos
@@ -94,7 +97,7 @@ XN99>XN157<&YN99>&YN157<&N255*
 https://susam.net/fxyt.html#XN99gXN157laYN99gaYN157laN255p
 
 
-### Rotated filled square
+### Rotated Filled Square
 
 Contributed by [Greg Oledzki][] on 24 Mar 2024.
 
@@ -103,6 +106,7 @@ XY+N192>XY-N64<&YX-N64<&XY+N320<&00
 ```
 
 https://susam.net/fxyt.html#XYsN192gXYdN64laYXdN64laXYsN320la00
+
 
 ### Empty Square
 
@@ -125,23 +129,31 @@ XY-N0=YN50=|CXN206=|XN49>&XN207<&YN49>YN206<&&00
 
 https://susam.net/fxyt.html#XYdN0eYN50eoCXN206eoXN49gaXN207laYN49gYN206laa00
 
-### Flags
+
+#### Flag of France
 
 Contributed by [Greg Oledzki][] on 24 Mar 2024.
 
-France:
 ```
 XN107>XN192<&N255*XN107>XN151<&N255*XN64>XN151<&N255*
 ```
 
 https://susam.net/fxyt.html#XN107gXN192laN255pXN107gXN151laN255pXN64gXN151laN255p
 
-and Italy is just `RR` away
+
+#### Flag of Italy
+
+Contributed by [Greg Oledzki][] on 24 Mar 2024.
+
+Continuing with the above example for the national Flag of France,
+the one for Italy is just `RR` away.
+
 ```
 XN107>XN192<&N255*XN107>XN151<&N255*XN64>XN151<&N255*RR
 ```
 
 https://susam.net/fxyt.html#XN107gXN192laN255pXN107gXN151laN255pXN64gXN151laN255pRR
+
 
 <!-- Authors -->
 
