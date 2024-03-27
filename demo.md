@@ -1,10 +1,14 @@
 FXYT Community Demos
 =====================
 
-This document contains a collection of demos contributed by community
-members.  If you create an interesting demo please [create a new
-post][post] and share it.  If the demo looks very interesting, it may
-be added to this document.
+This document contains a collection of FXYT demos contributed by
+community members.  FXYT is a tiny, esoteric, stack-based, postfix,
+canvas colouring language with only 36 simple commands.  See
+[README.md][] for more details about FXYT.
+
+If you create an interesting demo please [create a new post][post] and
+share it.  If the demo looks very interesting, it may be added to this
+document.
 
 [README.md]: README.md
 [post]: https://github.com/susam/fxyt/issues/new
