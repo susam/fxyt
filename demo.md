@@ -3,12 +3,15 @@ FXYT Community Demos
 
 This document contains a collection of FXYT demos contributed by
 community members.  FXYT is a tiny, esoteric, stack-based, postfix,
-canvas colouring language with only 36 simple commands.  See
-[README.md][] for more details about FXYT.
+canvas colouring language with only 36 simple commands.
+
+To learn more about FXYT, visit
+[susam.net/fxyt.html](https://susam.net/fxyt.html) or read the manual
+at [README.md][].
 
 If you create an interesting demo please [create a new post][post] and
-share it.  If the demo looks very interesting, it may be added to this
-document.
+share it with the community.  If the demo looks very interesting, it
+may be added to this document.
 
 [README.md]: README.md
 [post]: https://github.com/susam/fxyt/issues/new
@@ -23,6 +26,7 @@ Contents
 * [Static Demos](#static-demos)
   * [Mandelbrot](#mandelbrot)
   * [Grid](#grid)
+  * [Chequered Pattern](#chequered-pattern)
   * [Filled Circle](#filled-circle)
   * [Filled Square](#filled-square)
   * [Rotated Filled Square](#rotated-filled-square)
@@ -61,6 +65,7 @@ Paste the above code into <https://susam.net/fxyt.html> to see this demo.
 Static Demos
 -------------
 
+
 ### Mandelbrot
 
 
@@ -83,7 +88,9 @@ XN15%0N0=YN15%0N0=|00
 
 https://susam.net/fxyt.html#XN15r0N0eYN15r0N0eo00
 
-### Checkers pattern
+
+### Chequered Pattern
+
 Contributed by [Greg Oledzki][] on 23 Mar 2024.
 
 ```
@@ -148,7 +155,7 @@ XY-N0=YN50=|CXN206=|XN49>&XN207<&YN49>YN206<&&00
 https://susam.net/fxyt.html#XYdN0eYN50eoCXN206eoXN49gaXN207laYN49gYN206laa00
 
 
-#### Flag of France
+### Flag of France
 
 Contributed by [Greg Oledzki][] on 24 Mar 2024.
 
@@ -159,7 +166,7 @@ XN107>XN192<&N255*XN107>XN151<&N255*XN64>XN151<&N255*
 https://susam.net/fxyt.html#XN107gXN192laN255pXN107gXN151laN255pXN64gXN151laN255p
 
 
-#### Flag of Italy
+### Flag of Italy
 
 Contributed by [Greg Oledzki][] on 24 Mar 2024.
 
