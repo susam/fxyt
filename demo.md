@@ -10,8 +10,8 @@ To learn more about FXYT, visit
 at [README.md][].
 
 If you create an interesting demo please [create a new post][post] and
-share it with the community.  If the demo looks very interesting, it
-may be added to this document.
+share it with the community.  If the demo looks interesting, it may be
+added to this document.
 
 [README.md]: README.md
 [post]: https://github.com/susam/fxyt/issues/new

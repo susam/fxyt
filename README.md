@@ -551,7 +551,6 @@ N1N2N3P
 ```
 
 The resulting stack is [1, 2].
-2.
 
 
 Swap
