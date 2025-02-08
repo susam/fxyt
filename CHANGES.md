@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.4.0 (2025-02-XX)
+------------------
+
+### Changed
+
+- Include demo links in the built-in documentation.
+
+
 0.3.0 (2024-03-29)
 ------------------
 
