@@ -21,7 +21,7 @@ See some more demos here:
 - [Demo 3](https://susam.net/fxyt.html#XYoTN1srN255pTN1sqDN0S)
 - [Demo 4](https://susam.net/fxyt.html#XYpTN1srN255pTN1sqD)
 - [Demo 5](https://susam.net/fxyt.html#XYN256sTdrD)
-- [Community Demos](demo.md)
+- [Community Demos][demo.html]
 
 Visit https://susam.net/fxyt.html to write your own code!
 
@@ -44,6 +44,7 @@ FXYT stands for *function of x, y, and t* and it may be pronounced
 [DEMO1]: https://susam.net/fxyt.html#XYx
 [TIXY]: https://github.com/aemkei/tixy
 [DRAW1]: https://susam.net/fxyt.html
+[demo.html]: http://susam.github.io/fxyt/demo.html
 
 
 Contents
@@ -74,7 +75,7 @@ Contents
 * [FAQ](#faq)
 * [License](#license)
 * [Support](#support)
-* [More](#more)
+* [See Also](#see-also)
 
 
 Coordinates
@@ -649,7 +650,7 @@ obtained during the evaluation of the cell (0, 0) is set as the frame
 interval between the current iteration and next iteration of
 evaluation.
 
-For example, the following code sets the frame interval to 500 ms and
+For example, the following code sets the frame interval to 1000 ms and
 executes a time-dependent code:
 
 ```
@@ -657,11 +658,11 @@ N1000FXT^
 ```
 
 Remember that the input code is evaluated for each cell.  It is
-possible to write code such the evaluation of the code for different
-cells leads to different frame intervals.  As explained earlier, it is
-the frame interval set in the evaluation of cell (0, 0) that
-determines the frame interval for the next iteration of evaluation.
-For example, consider the following time-dependent code:
+possible to write code such that the evaluation of the code for
+different cells leads to different frame intervals.  As explained
+earlier, it is the frame interval set in the evaluation of cell (0, 0)
+that determines the frame interval for the next iteration of
+evaluation.  For example, consider the following time-dependent code:
 
 ```
 XY+N200+FT
@@ -704,7 +705,7 @@ During the evaluation of the code at coordinate (0, 0), the `W`
 command prints the coordinate (0, 0) followed by the data stack [0, 0]
 and halts the evaluation.
 
-A more typical requirement may to be find out what the input code
+A more typical requirement may be to find out what the input code
 evaluates to at a particular coordinate.  This can be accomplished by
 combining comparison commands with looping commands.  Here is an
 example that shows the result of evaluating `XY^` at the coordinate
@@ -758,7 +759,6 @@ The following idioms may be useful while writing FXYT code:
   loop with the code block in it.  For example, the code `YN10=[N255]`
   places the integer 255 on the data stack if the y-coordinate value
   equals 10.
-
 
 
 Common Mistakes
@@ -846,8 +846,8 @@ To report bugs or ask questions, [create issues][ISSUES].
 [ISSUES]: https://github.com/susam/fxyt/issues
 
 
-More
-----
+See Also
+--------
 
 See [Andromeda Invaders](https://github.com/susam/invaders), a
 1980s-arcade-style game written using HTML5, Canvas, and Web Audio.
@@ -855,7 +855,7 @@ See [Andromeda Invaders](https://github.com/susam/invaders), a
 See [CFRS[]](https://github.com/susam/cfrs), an extremely minimal
 turtle graphics language with only 6 simple commands.
 
-See [demo.md](demo.md) for FXYT community demos.
+See [this demo page][demo.html] for FXYT community demos.
 
 
 <!--
@@ -870,8 +870,8 @@ Release Checklist
 - Update CHANGES.md.
 - Run: npm run lint
 - Run: git status; git add -p
-- Run: VERSION=<VERSION>
-- Run: git commit -em "Set version to $VERSION"
-- Run: git tag $VERSION -m "FXYT $VERSION"
-- Run: git push origin main $VERSION
+- Run: VER=<VER>
+- Run: git commit -em "Set version to $VER"
+- Run: git tag $VER -m "FXYT $VER"
+- Run: git push origin main $VER
 -->

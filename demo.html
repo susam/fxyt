@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>FXYT Community Demos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#333">
+    <style>
+      body {
+        background: #111;
+        color: #bbb;
+        font-family: georgia, serif;
+        font-size: large;
+        line-height: 1.5;
+        margin: 0 auto;
+        max-width: 40em;
+        padding: 0 1em;
+      }
+      h1, h2 {
+        margin: 1.25em 0 0.25em 0;
+        line-height: 1.2;
+      }
+      section {
+        border: thin dotted #666;
+        padding: 0.625em;
+        margin: 1em 0;
+      }
+      section :first-child {
+        margin-top: 0;
+      }
+      section :last-child {
+        margin-bottom: 0;
+      }
+      a:link {
+        color: #9bf;
+      }
+      a:visited {
+        color: #a9f;
+      }
+      a:focus, a:hover {
+        color: #9cf;
+      }
+      a:active {
+        color: #f99;
+      }
+      a:empty:before {
+        content: "#";
+      }
+      a:empty {
+        visibility: hidden;
+        padding-left: 0.25em;
+      }
+      :hover > a {
+        visibility: visible;
+      }
+      pre {
+        background: #000;
+        box-shadow: 0 0 0.5em #333;
+        overflow: auto;
+        padding: 0.5em;
+      }
+      pre, code {
+        color: #9c6;
+        font-family: monospace,monospace;
+      }
+      hr {
+        margin: 1em auto;
+        border: 0;
+        border-bottom: 0.15em dotted #666;
+      }
+      footer {
+        margin: 1em auto;
+        text-align: center;
+      }
+      nav a {
+        margin-right: 1.5em;
+        line-height: 2.5;
+      }
+      nav a:last-child  {
+        margin-right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="fxyt-community-demos">FXYT Community Demos</h1>
+    <p>
+      This document contains a collection of FXYT demos contributed by
+      community members. FXYT is a tiny, esoteric, stack-based,
+      postfix, canvas colouring language with only 36 simple commands.
+      To learn more about FXYT, visit
+      <a href="https://susam.net/fxyt.html">susam.net/fxyt.html</a>
+      or read the manual at
+      <a href="https://github.com/susam/fxyt#readme">github.com/susam/fxyt</a>.
+    </p>
+    <p>
+      If you create an interesting demo that fits in 256 bytes of
+      code, please
+      <a href="https://github.com/susam/fxyt/issues">create a new post
+      here</a> and share it with the community.  If the demo looks
+      interesting, it may be added to this page.
+    </p>
+    <h2 id="contents">Contents<a href="#contents"></a></h2>
+    <ul>
+      <li>
+        <a href="#dynamic-demos">Dynamic Demos</a>
+        <ul>
+          <li><a href="#ripples">Ripples</a></li>
+          <li><a href="#animated-sine-wave">Animated Sine Wave</a></li>
+        </ul>
+      </li>
+      <li><a href="#static-demos">Static Demos</a>
+        <ul>
+          <li><a href="#mandelbrot">Mandelbrot</a></li>
+          <li><a href="#grid">Grid</a></li>
+          <li><a href="#chequered-pattern">Chequered Pattern</a></li>
+          <li><a href="#filled-circle">Filled Circle</a></li>
+          <li><a href="#filled-square">Filled Square</a></li>
+          <li><a href="#rotated-filled-square">Rotated Filled Square</a></li>
+          <li><a href="#empty-square">Empty Square</a></li>
+          <li><a href="#empty-right-triangle">Empty Right Triangle</a></li>
+          <li><a href="#flag-of-france">Flag of France</a></li>
+          <li><a href="#flag-of-italy">Flag of Italy</a></li>
+        </ul>
+      </li>
+      <li><a href="#contributors">Contributors</a></li>
+      <li><a href="#see-also">See Also</a></li>
+    </ul>
+    <h2 id="dynamic-demos">Dynamic Demos<a href="#dynamic-demos"></a></h2>
+    <p>
+      Dynamic demos contain the <code>T</code> command which makes the
+      code time-dependent.  This is often used to produce animated or
+      dynamic effects in the demo.  The following subsections present
+      a collection of dynamic demos created by various community
+      members.
+    </p>
+
+    <section>
+      <h3 id="ripples">Ripples<a href="#ripples"></a></h3>
+      <p>Contributed by <a href="https://news.ycombinator.com/user?id=TJSomething">TJSomething</a> on 22 Dec 2023.</p>
+      <pre><code>MXN127-D*YN127-D*+N5/DN2/NN6[RRSDRDRS/+N2/R]PSPTN2*-N20%N12*</code></pre>
+      <p><a href="https://susam.net/fxyt.html#MXN127dDpYN127dDpsN5qDN2qNN6bRRSDRDRSqsN2qRcPSPTN2pdN20rN12p">Run It</a></p>
+    </section>
+
+    <section>
+      <h3 id="animated-sine-wave">Animated Sine Wave<a href="#animated-sine-wave"></a></h3>
+      <p>Contributed by <a href="https://github.com/ncw">Nick Craig-Wood</a> on 24 Mar 2024.</p>
+      <pre><code>XT+N128-N3142*N128/DN3142&gt;[N6284-]DN1571&gt;[N3142S-]DNN1571-&lt;[NN3142-S-]DDN166SD*N120000/-SD*N1000/*N1000/N1000S-*N1000/N1100+N3*N25/Y&gt;NS[PN255]</code></pre>
+      <p><a href="https://susam.net/fxyt.html#XTsN128dN3142pN128qDN3142gbN6284dcDN1571gbN3142SdcDNN1571dlbNN3142dSdcDDN166SDpN120000qdSDpN1000qpN1000qN1000SdpN1000qN1100sN3pN25qYgNSbPN255c">Run It</a></p>
+    </section>
+
+    <h2 id="static-demos">Static Demos<a href="#static-demos"></a></h2>
+    <p>
+      Static demos do not contain the <code>T</code> thereby keeping
+      the code time-independent.  As a result, these demos produce a
+      static output that does not change with time.  The following
+      subsections present a collection of some nice static demos
+      created by our little community of FXYT artists!
+    </p>
+
+    <section>
+      <h3 id="mandelbrot-set">Mandelbrot Set<a href="#mandelbrot-set"></a></h3>
+      <p>Contributed by <a href="https://github.com/ncw">Nick Craig-Wood</a> on 23 Mar 2024.</p>
+      <pre><code>NNNN7[SDD*N1024/RDD*N1024/R+N4096&lt;[RN1+RR]SDD*N1024/RDD*N1024/R+N4096&lt;![PPN4000N4000]SDD*N1024/RDD*N1024/RS-XN128-N12*N512-+RR*N512/YN128-N12*+]PPN30*</code></pre>
+      <p><a href="https://susam.net/fxyt.html#NNNN7bSDDpN1024qRDDpN1024qRsN4096lbRN1sRRcSDDpN1024qRDDpN1024qRsN4096libPPN4000N4000cSDDpN1024qRDDpN1024qRSdXN128dN12pN512dsRRpN512qYN128dN12pscPPN30p">Run It</a></p>
+    </section>
+
+    <section>
+      <h3 id="grid">Grid<a href="#grid"></a></h3>
+      <p>Contributed by <a href="https://github.com/mccartney">Greg Oledzki</a> on 23 Mar 2024.</p>
+      <pre><code>XN15%0N0=YN15%0N0=|00</code></pre>
+      <p><a href="https://susam.net/fxyt.html#XN15r0N0eYN15r0N0eo00">Run It</a></p>
+    </section>
+
+    <section>
+      <h3 id="chequered-pattern">Chequered Pattern<a href="#chequered-pattern"></a></h3>
+      <p>Contributed by <a href="https://github.com/mccartney">Greg Oledzki</a> on 23 Mar 2024.</p>
+      <pre><code>XN16/N2%N0=YN16/N2%N1=^N255*</code></pre>
+      <p><a href="https://susam.net/fxyt.html#XN16qN2rN0eYN16qN2rN1exN255p">Run It</a></p>
+    </section>
+
+    <section>
+      <h3 id="filled-circle">Filled Circle<a href="#filled-circle"></a></h3>
+      <p>Contributed by <a href="https://github.com/mccartney">Greg Oledzki</a> on 23 Mar 2024.</p>
+      <pre><code>XN128-XN128-*YN128-YN128-*+N128/N64&lt;00</code></pre>
+      <p><a href="https://susam.net/fxyt.html#XN128dXN128dpYN128dYN128dpsN128qN64l00">Run It</a></p>
+    </section>
+
+    <section>
+      <h3 id="filled-square">Filled Square<a href="#filled-square"></a></h3>
+      <p>Contributed by <a href="https://github.com/mccartney">Greg Oledzki</a> on 23 Mar 2024.</p>
+      <pre><code>XN99&gt;XN157&lt;&amp;YN99&gt;&amp;YN157&lt;&amp;N255*</code></pre>
+      <p><a href="https://susam.net/fxyt.html#XN99gXN157laYN99gaYN157laN255p">Run It</a></p>
+    </section>
+
+    <section>
+      <h3 id="rotated-filled-square">Rotated Filled Square<a href="#rotated-filled-square"></a></h3>
+      <p>Contributed by <a href="https://github.com/mccartney">Greg Oledzki</a> on 24 Mar 2024.</p>
+      <pre><code>XY+N192&gt;XY-N64&lt;&amp;YX-N64&lt;&amp;XY+N320&lt;&amp;00</code></pre>
+      <p><a href="https://susam.net/fxyt.html#XYsN192gXYdN64laYXdN64laXYsN320la00">Run It</a></p>
+    </section>
+
+    <section>
+      <h3 id="empty-square">Empty Square<a href="#empty-square"></a></h3>
+      <p>Contributed by <a href="https://github.com/mccartney">Greg Oledzki</a> on 23 Mar 2024.</p>
+      <pre><code>XN100=XN156=|YN100=YN156=||XN99&gt;&amp;XN157&lt;&amp;YN99&gt;&amp;YN157&lt;&amp;N255*</code></pre>
+      <p><a href="https://susam.net/fxyt.html#XN100eXN156eoYN100eYN156eooXN99gaXN157laYN99gaYN157laN255p">Run It</a></p>
+    </section>
+
+    <section>
+      <h3 id="empty-right-triangle">Empty Right Triangle<a href="#empty-right-triangle"></a></h3>
+      <p>Contributed by <a href="https://github.com/mccartney">Greg Oledzki</a> on 23 Mar 2024.</p>
+      <pre><code>XY-N0=YN50=|CXN206=|XN49&gt;&amp;XN207&lt;&amp;YN49&gt;YN206&lt;&amp;&amp;00</code></pre>
+      <p><a href="https://susam.net/fxyt.html#XYdN0eYN50eoCXN206eoXN49gaXN207laYN49gYN206laa00">Run It</a></p>
+    </section>
+
+    <section>
+      <h3 id="flag-of-france">Flag of France<a href="#flag-of-france"></a></h3>
+      <p>Contributed by <a href="https://github.com/mccartney">Greg Oledzki</a> on 24 Mar 2024.</p>
+      <pre><code>XN107&gt;XN192&lt;&amp;N255*XN107&gt;XN151&lt;&amp;N255*XN64&gt;XN151&lt;&amp;N255*</code></pre>
+      <p><a href="https://susam.net/fxyt.html#XN107gXN192laN255pXN107gXN151laN255pXN64gXN151laN255p">Run It</a></p>
+    </section>
+
+    <section>
+      <h3 id="flag-of-italy">Flag of Italy<a href="#flag-of-italy"></a></h3>
+      <p>Contributed by <a href="https://github.com/mccartney">Greg Oledzki</a> on 24 Mar 2024.</p>
+      <pre><code>XN107&gt;XN192&lt;&amp;N255*XN107&gt;XN151&lt;&amp;N255*XN64&gt;XN151&lt;&amp;N255*RR</code></pre>
+      <p><a href="https://susam.net/fxyt.html#XN107gXN192laN255pXN107gXN151laN255pXN64gXN151laN255pRR">Run It</a></p>
+    </section>
+
+    <h2 id="contributors">Contributors<a href="#contributors"></a></h2>
+    <p>
+      All contributors featured on this page:
+    </p>
+    <ul>
+      <li><a href="https://github.com/mccartney">Greg Oledzki</a></li>
+      <li><a href="https://github.com/ncw">Nick Craig-Wood</a></li>
+      <li><a href="https://news.ycombinator.com/user?id=TJSomething">TJSomething</a></li>
+    </ul>
+    <h2 id="see-also">See Also<a href="#see-also"></a></h2>
+    <p>
+      If you enjoyed these demos, see also:
+    </p>
+    <ul>
+      <li><a href="https://susam.net/invaders.html">Andromeda Invaders</a></li>
+      <li><a href="https://susam.net/invaders.html#auto">Autopilot for Invaders</a></li>
+      <li><a href="https://susam.net/cfrs.html">CFRS[]</a></li>
+      <li><a href="https://susam.github.io/cfrs/demo.html">CFRS[] Community Demos</a></li>
+      <li><a href="https://susam.github.io/pcface/">PC Face</a></li>
+    </ul>
+    <p>
+      Thank you for visiting this page!
+    </p>
+    <footer>
+      <hr>
+      <nav>
+        <a href="https://susam.net/fxyt.html">FXYT</a>
+        <a href="https://github.com/susam/fxyt">GitHub</a>
+        <a href="https://mastodon.social/@susam">Mastodon</a>
+      </nav>
+    </footer>
+  </body>
+</html>
