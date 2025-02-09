@@ -38,7 +38,7 @@ a creative code golfing playground that offers the challenge of
 crafting interesting visuals with a limited set of commands.
 
 FXYT stands for *function of x, y, and t* and it may be pronounced
-/fɪksɪt/ ("fixit").
+/fɒksɪt/ ("foxit").
 
 [IMG1]: https://susam.github.io/blob/img/fxyt/fxyt-0.1.0-xor.png
 [DEMO1]: https://susam.net/fxyt.html#XYx
@@ -785,7 +785,7 @@ following constraints:
 - Whenever a command produces an integer result, the result must not
   not exceed 2147483647 and it must not be less than -2147483648.
 
-- The input code must not exceed 256 bytes in length.
+- The input code must not exceed 1024 bytes in length.
 
 - The number of commands executed to evaluate the colour for a cell
   must not exceed 1000.
@@ -799,9 +799,9 @@ Distributable Links
 
 The reference implementation provides distributable links when the
 input code is 64 bytes or less in length.  Note that the
-implementation allows code up to a maximum length of 256 bytes.
+implementation allows code up to a maximum length of 1024 bytes.
 However, no distributable link is generated when the code length
-exceeds 64 bytes.  Thus code that does not exceed 64 bytes in length
+exceeds 256 bytes.  Thus code that does not exceed 256 bytes in length
 has a special status in the reference implementation.
 
 The distributable link encodes the input code and appends it as a URL

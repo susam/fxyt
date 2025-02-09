@@ -6,6 +6,8 @@ Changelog
 
 ### Changed
 
+- Increase maximum distributable code length from 64 bytes to 256 bytes.
+- Increase maximum allowed code length from 256 bytes to 1024 bytes.
 - Include demo links in the built-in documentation.
 
 
