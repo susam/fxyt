@@ -276,8 +276,8 @@
         // Set overall padding and calculate overall available width and height.
         document.body.style.padding = PADDING + 'px'
         const panels = 2
-        const availableWidth = window.innerWidth - 2 * PADDING
-        const availableHeight = window.innerHeight - panels * PANEL_HEIGHT - (panels + 2) * PADDING
+        const availableWidth = document.documentElement.clientWidth - 2 * PADDING
+        const availableHeight = document.documentElement.clientHeight - panels * PANEL_HEIGHT - (panels + 2) * PADDING
 
         // Resize canvas.
         canvasSize = Math.floor(Math.min(availableWidth, availableHeight))
