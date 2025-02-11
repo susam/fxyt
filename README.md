@@ -876,11 +876,11 @@ Release Checklist
 
   VER=<VER>
   git commit -em "Set version to $VER"
-  git tag $VER -m "CFRS[] $VER"
+  git tag $VER -m "FXYT $VER"
   git push origin main $VER
 
-  git remote add cb https://codeberg.org/susam/cfrs.git
-  git push cb main:pages
+  git remote add cb https://codeberg.org/susam/fxyt.git
   git push cb --all
   git push cb --tags
+  git push cb main:pages
 -->
