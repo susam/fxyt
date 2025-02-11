@@ -1,6 +1,6 @@
 {
   "name": "fxyt",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "FXYT: A tiny stack-based canvas colouring language",
   "main": "fxyt.html",
   "files": [

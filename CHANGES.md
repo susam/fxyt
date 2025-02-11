@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.5.0 (2025-02-11)
+------------------
+
+### Fixed
+
+- Canvas overflow on some mobile web browsers such as Chrome on
+  Samsung Galaxy S8.
+
+
 0.4.0 (2025-02-09)
 ------------------
 
